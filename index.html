@@ -320,7 +320,13 @@
                     </ul>
                 </div>
                 <div class="archive-right-pane">
-                    <h3 id="archive-selected-date-title">Lütfen bir tarih seçin</h3>
+                    <div class="archive-header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h3 id="archive-selected-date-title" style="margin: 0;">Lütfen bir tarih seçin</h3>
+                        <div class="archive-actions" id="archive-bulk-actions" style="display: none; gap: 8px;">
+                            <button class="btn-clear-selected hidden" id="btn-archive-delete-selected" onclick="deleteSelectedArchiveWords()" title="Seçilenleri sil">🗑️ Seçilenleri Sil</button>
+                            <button class="btn-clear-all" id="btn-archive-delete-all" onclick="deleteDateArchiveWords()" title="Bu tarihteki tüm kelimeleri sil">⚠️ Bu Tarihtekileri Sil</button>
+                        </div>
+                    </div>
                     <div id="archive-words-placeholder" class="placeholder-msg">
                         📅 Sol menüden tarih seçerek o gün eklenen kelimeleri görebilirsiniz.
                     </div>
@@ -389,6 +395,23 @@
                         <div class="game-card-icon">💡</div>
                         <h3>Hafızaya Alma (Smart Recall)</h3>
                         <p>Süre ayarlı olarak kelime belirir, ardından otomatik olarak karşılığı gelir. Ezber gücü!</p>
+                    </div>
+                </div>
+                
+                <!-- Hatalı Sorular Arşivi Bölümü -->
+                <div class="wrong-answers-container" style="margin-top: 30px; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
+                        <h2 style="margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 8px;"> Yanlış Cevaplar Arşivi (<span id="wrong-answers-count">0</span>)</h2>
+                        <button class="btn-clear-all" onclick="clearAllWrongAnswers()" style="padding: 4px 10px; font-size: 0.8rem;">Listeyi Temizle</button>
+                    </div>
+                    <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px;">
+                        Testlerde yanlış cevapladığınız sorular otomatik olarak buraya eklenir. Kelimeyi ezberlediğinizde listeden çıkarabilirsiniz.
+                    </p>
+                    <div id="wrong-answers-placeholder" class="placeholder-msg">
+                        🎉 Harika! Yanlış cevaplanmış kelime bulunmuyor.
+                    </div>
+                    <div class="wrong-answers-list" id="wrong-answers-list" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Yanlış cevaplanan kelimeler buraya eklenecek -->
                     </div>
                 </div>
             </div>

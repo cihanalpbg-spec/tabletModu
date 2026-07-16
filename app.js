@@ -279,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize Float Selection Color Listener
     initSelectionColorListener();
+    
+    // Load incorrect questions list
+    loadWrongAnswersList();
 });
 
 // LOAD & SAVE SETTINGS
@@ -367,6 +370,7 @@ function switchScreen(screenId) {
     } else if (screenId === 'screen-tests') {
         document.getElementById('menu-tests').classList.add('active');
         checkTestLockStatus();
+        loadWrongAnswersList();
     } else if (screenId === 'screen-reports') {
         document.getElementById('menu-reports').classList.add('active');
         updateReportUI();
@@ -1624,14 +1628,20 @@ function renderWordCards(wordsList, containerElement) {
 }
 
 function updateDeleteSelectedButtonVisibility() {
-    const checked = document.querySelectorAll('.card-select-checkbox:checked').length;
-    const btn = document.getElementById('btn-delete-selected');
-    if (btn) {
-        if (checked > 0) {
-            btn.classList.remove('hidden');
-        } else {
-            btn.classList.add('hidden');
-        }
+    // Alphabetical screen selection
+    const checkedAlpha = document.querySelectorAll('#alphabetical-words-grid .card-select-checkbox:checked').length;
+    const btnAlpha = document.getElementById('btn-delete-selected');
+    if (btnAlpha) {
+        if (checkedAlpha > 0) btnAlpha.classList.remove('hidden');
+        else btnAlpha.classList.add('hidden');
+    }
+    
+    // Archive screen selection
+    const checkedArchive = document.querySelectorAll('#archive-words-grid .card-select-checkbox:checked').length;
+    const btnArchive = document.getElementById('btn-archive-delete-selected');
+    if (btnArchive) {
+        if (checkedArchive > 0) btnArchive.classList.remove('hidden');
+        else btnArchive.classList.add('hidden');
     }
 }
 
@@ -1763,6 +1773,8 @@ function filterAlphabeticalList() {
 }
 
 // HISTORICAL ARCHIVE ENGINE
+let activeArchiveDate = null;
+
 function loadArchiveList() {
     getWords(words => {
         const langWords = words.filter(w => w.language === activeLang);
@@ -1795,6 +1807,8 @@ function loadArchiveList() {
             document.getElementById('archive-selected-date-title').textContent = 'Kayıtlı arşiv bulunamadı';
             document.getElementById('archive-words-grid').classList.add('hidden');
             document.getElementById('archive-words-placeholder').classList.remove('hidden');
+            const bulkActions = document.getElementById('archive-bulk-actions');
+            if (bulkActions) bulkActions.style.display = 'none';
             return;
         }
         
@@ -1807,8 +1821,18 @@ function loadArchiveList() {
                 document.querySelectorAll('.date-item').forEach(i => i.classList.remove('active'));
                 li.classList.add('active');
                 
+                activeArchiveDate = date; // Set global date
+                
                 document.getElementById('archive-selected-date-title').textContent = `${date} Tarihli Kelimeler (${groups[date].length} Kelime)`;
                 document.getElementById('archive-words-placeholder').classList.add('hidden');
+                
+                // Show archive bulk delete bar
+                const bulkActions = document.getElementById('archive-bulk-actions');
+                if (bulkActions) {
+                    bulkActions.style.display = 'flex';
+                    const btnSel = document.getElementById('btn-archive-delete-selected');
+                    if (btnSel) btnSel.classList.add('hidden');
+                }
                 
                 const grid = document.getElementById('archive-words-grid');
                 grid.classList.remove('hidden');
@@ -1819,6 +1843,88 @@ function loadArchiveList() {
             dateList.appendChild(li);
         });
     });
+}
+
+function deleteSelectedArchiveWords() {
+    const checkedBoxes = document.querySelectorAll('#archive-words-grid .card-select-checkbox:checked');
+    if (checkedBoxes.length === 0) return;
+    
+    if (confirm(`${checkedBoxes.length} adet seçilen kelimeyi silmek istediğinizden emin misiniz?`)) {
+        const idsToDelete = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.wordId, 10));
+        
+        let completed = 0;
+        idsToDelete.forEach(id => {
+            deleteWord(id, () => {
+                completed++;
+                if (completed === idsToDelete.length) {
+                    alert("Seçilen tüm kelimeler başarıyla silindi!");
+                    updateDeleteSelectedButtonVisibility();
+                    
+                    getWords(() => {
+                        loadAlphabeticalList();
+                        loadArchiveList();
+                        
+                        // Auto re-click current active date to update display
+                        setTimeout(refreshActiveArchiveDate, 100);
+                    });
+                }
+            });
+        });
+    }
+}
+
+function deleteDateArchiveWords() {
+    if (!activeArchiveDate) return;
+    
+    if (confirm(`DİKKAT! ${activeArchiveDate} tarihli TÜM kelimeleri silmek istediğinizden emin misiniz?`)) {
+        getWords(words => {
+            const wordsToDelete = words.filter(w => w.language === activeLang && (w.date || 'Tarihsiz') === activeArchiveDate);
+            if (wordsToDelete.length === 0) return;
+            
+            let completed = 0;
+            wordsToDelete.forEach(w => {
+                deleteWord(w.id, () => {
+                    completed++;
+                    if (completed === wordsToDelete.length) {
+                        alert(`${activeArchiveDate} tarihli tüm kelimeler silindi!`);
+                        activeArchiveDate = null;
+                        
+                        // Hide actions
+                        const actions = document.getElementById('archive-bulk-actions');
+                        if (actions) actions.style.display = 'none';
+                        
+                        getWords(() => {
+                            loadAlphabeticalList();
+                            loadArchiveList();
+                            updateReportUI();
+                        });
+                    }
+                });
+            });
+        });
+    }
+}
+
+function refreshActiveArchiveDate() {
+    if (!activeArchiveDate) return;
+    
+    const items = document.querySelectorAll('.date-item');
+    let found = false;
+    items.forEach(li => {
+        if (li.querySelector('span').textContent === activeArchiveDate) {
+            li.click();
+            found = true;
+        }
+    });
+    
+    if (!found) {
+        activeArchiveDate = null;
+        const actions = document.getElementById('archive-bulk-actions');
+        if (actions) actions.style.display = 'none';
+        document.getElementById('archive-selected-date-title').textContent = 'Lütfen bir tarih seçin';
+        document.getElementById('archive-words-placeholder').classList.remove('hidden');
+        document.getElementById('archive-words-grid').classList.add('hidden');
+    }
 }
 
 // TEST & GAMES SYSTEM
@@ -2086,6 +2192,9 @@ function renderHangmanKeyboard(wordClean, wordsList) {
                     
                     logReportActivity('testResult', 'incorrect');
                     
+                    // Add word to wrong answers archive
+                    addWrongAnswer(hangmanWord, 'Adam Asmaca');
+                    
                     setTimeout(() => setupGameBoard(wordsList), 3500);
                 }
             }
@@ -2198,6 +2307,9 @@ function handleMatchingClick(index, el) {
 
 // 3. / 4. / 5. MULTIPLE CHOICE TESTS (EN-TR, TR-EN & 5 OPTIONS)
 function setupMultipleChoiceBoard(wordsList, numOptions = 4, explicitDirection = null) {
+    // Clear previous question board to prevent vertical piling/layering bugs
+    document.getElementById('playground-body').innerHTML = '';
+    
     const direction = explicitDirection || (currentGameType === 'en-tr' ? 'en-tr' : 'tr-en');
     
     // Choose a target word
@@ -2291,25 +2403,37 @@ function setupMultipleChoiceBoard(wordsList, numOptions = 4, explicitDirection =
 
 function handleChoiceSelected(choiceIdx, numOptions, wordsList) {
     const list = document.querySelector('.choices-list');
-    list.style.pointerEvents = 'none'; // Lock choices
+    if (list) list.style.pointerEvents = 'none'; // Lock choices
     
     const selected = currentTestChoices[choiceIdx];
     const btn = document.getElementById(`choice-btn-${choiceIdx}`);
     
     if (selected.correct) {
-        btn.classList.add('correct');
+        if (btn) btn.classList.add('correct');
         gameScore += 10;
         document.getElementById('game-score').textContent = gameScore;
         logReportActivity('testResult', 'correct');
     } else {
-        btn.classList.add('incorrect');
+        if (btn) btn.classList.add('incorrect');
         // Show correct choice
         currentTestChoices.forEach((c, idx) => {
             if (c.correct) {
-                document.getElementById(`choice-btn-${idx}`).classList.add('correct');
+                const correctBtn = document.getElementById(`choice-btn-${idx}`);
+                if (correctBtn) correctBtn.classList.add('correct');
             }
         });
         logReportActivity('testResult', 'incorrect');
+        
+        // Log wrong answer to incorrect questions archive
+        let gameName = "Kelime Anlamı Testi";
+        if (currentGameType === 'five-options') {
+            gameName = "5 Şıklı Çoktan Seçmeli Test";
+        } else if (currentGameType === 'tr-en') {
+            gameName = "Kelime Bulucu (TR -> Hedef Dil)";
+        } else if (currentGameType === 'en-tr') {
+            gameName = "Kelime Anlamı (Hedef Dil -> TR)";
+        }
+        addWrongAnswer(currentTestWord, gameName);
     }
     
     setTimeout(() => {
@@ -2433,13 +2557,17 @@ function handleTimedChoiceSelected(choiceIdx, wordsList) {
         document.getElementById('game-score').textContent = gameScore;
         logReportActivity('testResult', 'correct');
     } else {
-        btn.classList.add('incorrect');
+        if (btn) btn.classList.add('incorrect');
         currentTestChoices.forEach((c, idx) => {
             if (c.correct) {
-                document.getElementById(`choice-btn-${idx}`).classList.add('correct');
+                const correctBtn = document.getElementById(`choice-btn-${idx}`);
+                if (correctBtn) correctBtn.classList.add('correct');
             }
         });
         logReportActivity('testResult', 'incorrect');
+        
+        // Add word to wrong answers archive
+        addWrongAnswer(currentTestWord, 'Zaman Ayarlı Kelime Testi');
     }
     
     setTimeout(() => {
@@ -2448,63 +2576,137 @@ function handleTimedChoiceSelected(choiceIdx, wordsList) {
 }
 
 // 7. HAFIZAYA ALMA (SMART RECALL)
+let memorySessionWords = [];
+let currentMemoryIndex = 0;
+let memoryAutoAdvance = true;
+let memoryAutoNextTimeoutId = null;
+let memoryDuration = 5; // Default 5 seconds
+
 function setupMemoryBoard(wordsList) {
+    // Shuffle and slice exactly 20 random words for the session
+    memorySessionWords = wordsList.sort(() => 0.5 - Math.random()).slice(0, 20);
+    currentMemoryIndex = 0;
+    
+    const playground = document.getElementById('playground-body');
+    playground.innerHTML = '';
+    
+    // Clear any active timers
+    if (memoryTimerId) clearTimeout(memoryTimerId);
+    if (memoryAutoNextTimeoutId) clearTimeout(memoryAutoNextTimeoutId);
+    
     const box = document.createElement('div');
     box.className = 'game-box';
     box.innerHTML = `
+        <div class="memory-status-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed var(--border-color); padding-bottom: 10px;">
+            <span class="memory-progress-label" style="font-weight: bold; font-size: 1.1rem; color: var(--primary-color);">Kelime: <span id="mem-current-index">1</span> / <span id="mem-total-count">${memorySessionWords.length}</span></span>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.95rem; cursor: pointer; user-select: none; font-weight: bold; color: var(--text-color);">
+                <input type="checkbox" id="memory-auto-toggle" onchange="toggleMemoryAutoAdvance(this.checked)" checked style="width:16px; height:16px; accent-color:var(--primary-color);">
+                Otomatik İlerle
+            </label>
+        </div>
+
         <div class="setting-row">
             <span>Süreyi Ayarlayın:</span>
             <div class="time-btn-group">
-                <button class="time-btn ${timedDuration === 3 ? 'active' : ''}" onclick="setTimedDuration(3, this)">3 sn</button>
-                <button class="time-btn ${timedDuration === 5 ? 'active' : ''}" onclick="setTimedDuration(5, this)">5 sn</button>
-                <button class="time-btn ${timedDuration === 7 ? 'active' : ''}" onclick="setTimedDuration(7, this)">7 sn</button>
-                <button class="time-btn ${timedDuration === 10 ? 'active' : ''}" onclick="setTimedDuration(10, this)">10 sn</button>
-            </div>
-        </div>
-        <div class="setting-row">
-            <span>Yönü Ayarlayın:</span>
-            <div class="time-btn-group">
-                <button class="time-btn ${memoryDirection === 'en-tr' ? 'active' : ''}" onclick="setMemoryDirection('en-tr', this)">Hedef Dil ➔ TR</button>
-                <button class="time-btn ${memoryDirection === 'tr-en' ? 'active' : ''}" onclick="setMemoryDirection('tr-en', this)">TR ➔ Hedef Dil</button>
+                <button class="time-btn ${memoryDuration === 1 ? 'active' : ''}" id="mem-time-1" onclick="setMemoryTime(1, this)">1 sn</button>
+                <button class="time-btn ${memoryDuration === 2 ? 'active' : ''}" id="mem-time-2" onclick="setMemoryTime(2, this)">2 sn</button>
+                <button class="time-btn ${memoryDuration === 3 ? 'active' : ''}" id="mem-time-3" onclick="setMemoryTime(3, this)">3 sn</button>
+                <button class="time-btn ${memoryDuration === 5 ? 'active' : ''}" id="mem-time-5" onclick="setMemoryTime(5, this)">5 sn</button>
+                <button class="time-btn ${memoryDuration === 7 ? 'active' : ''}" id="mem-time-7" onclick="setMemoryTime(7, this)">7 sn</button>
+                <button class="time-btn ${memoryDuration === 10 ? 'active' : ''}" id="mem-time-10" onclick="setMemoryTime(10, this)">10 sn</button>
             </div>
         </div>
         
-        <div class="memory-card" id="memory-flashcard">
+        <div class="setting-row">
+            <span>Yönü Ayarlayın:</span>
+            <div class="time-btn-group">
+                <button class="time-btn ${memoryDirection === 'en-tr' ? 'active' : ''}" id="mem-dir-en-tr" onclick="setMemoryDirection('en-tr', this)">Hedef Dil ➔ TR</button>
+                <button class="time-btn ${memoryDirection === 'tr-en' ? 'active' : ''}" id="mem-dir-tr-en" onclick="setMemoryDirection('tr-en', this)">TR ➔ Hedef Dil</button>
+            </div>
+        </div>
+        
+        <div class="memory-card" id="memory-flashcard" onclick="flipMemoryCardManual()">
             <div class="memory-card-inner">
                 <div class="memory-front" id="memory-front-val"></div>
                 <div class="memory-back" id="memory-back-val"></div>
             </div>
         </div>
         
-        <div id="memory-timer-display" style="font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;">Gözüküyor...</div>
-        <button class="btn-game-control" id="btn-next-memory" onclick="nextMemoryRound()">Sonraki Kart ➔</button>
+        <div id="memory-timer-display" style="font-weight: bold; font-size: 1.2rem; margin: 15px 0; color: var(--text-color);">Süre başlıyor...</div>
+        
+        <div class="memory-navigation-row" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
+            <button class="btn-game-control" onclick="prevMemoryCard()">⏮️ Önceki</button>
+            <button class="btn-game-control btn-primary" onclick="flipMemoryCardManual()">🔄 Çevir</button>
+            <button class="btn-game-control" onclick="nextMemoryCard()">Sonraki ⏭️</button>
+        </div>
     `;
     
-    document.getElementById('playground-body').appendChild(box);
+    playground.appendChild(box);
     
-    document.getElementById('btn-next-memory').style.display = 'none';
-    startMemoryRound(wordsList);
+    memoryAutoAdvance = true;
+    startMemoryRoundAt(0);
 }
 
 function setMemoryDirection(dir, btnEl) {
     memoryDirection = dir;
     btnEl.parentNode.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
     btnEl.classList.add('active');
+    
+    // Refresh card view
+    startMemoryRoundAt(currentMemoryIndex);
 }
 
-function startMemoryRound(wordsList) {
+function setMemoryTime(seconds, btnEl) {
+    memoryDuration = seconds;
+    btnEl.parentNode.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+    
+    // Restart round with new duration
+    startMemoryRoundAt(currentMemoryIndex);
+}
+
+function toggleMemoryAutoAdvance(checked) {
+    memoryAutoAdvance = checked;
+    if (!checked) {
+        if (memoryAutoNextTimeoutId) clearTimeout(memoryAutoNextTimeoutId);
+        const timerDisplay = document.getElementById('memory-timer-display');
+        const card = document.getElementById('memory-flashcard');
+        if (card && card.classList.contains('revealed') && timerDisplay) {
+            timerDisplay.textContent = "Otomatik ilerleme durduruldu. Sonraki tuşuna basın.";
+        }
+    } else {
+        const card = document.getElementById('memory-flashcard');
+        if (card && card.classList.contains('revealed')) {
+            scheduleAutoNext();
+        }
+    }
+}
+
+function startMemoryRoundAt(index) {
+    if (memorySessionWords.length === 0) return;
+    
+    // Bounds guard loop
+    if (index < 0) index = memorySessionWords.length - 1;
+    if (index >= memorySessionWords.length) index = 0;
+    
+    currentMemoryIndex = index;
+    
+    // Reset status trackers
     if (memoryTimerId) clearTimeout(memoryTimerId);
+    if (memoryAutoNextTimeoutId) clearTimeout(memoryAutoNextTimeoutId);
+    
+    const idxEl = document.getElementById('mem-current-index');
+    if (idxEl) idxEl.textContent = currentMemoryIndex + 1;
     
     const card = document.getElementById('memory-flashcard');
-    card.classList.remove('revealed');
+    if (card) card.classList.remove('revealed');
     
-    document.getElementById('btn-next-memory').style.display = 'none';
-    
-    // Choose word
-    currentTestWord = wordsList[Math.floor(Math.random() * wordsList.length)];
+    const w = memorySessionWords[currentMemoryIndex];
+    currentTestWord = w;
     
     const front = document.getElementById('memory-front-val');
     const back = document.getElementById('memory-back-val');
+    if (!front || !back) return;
     
     front.innerHTML = '';
     back.innerHTML = '';
@@ -2512,64 +2714,65 @@ function startMemoryRound(wordsList) {
     if (memoryDirection === 'en-tr') {
         const valF = document.createElement('div');
         valF.style.fontSize = '2.5rem';
-        renderCellContent(currentTestWord.word, valF);
+        renderCellContent(w.word, valF);
         front.appendChild(valF);
         
         const valB = document.createElement('div');
         valB.style.fontSize = '2.2rem';
         valB.style.color = 'var(--primary-color)';
-        renderCellContent(currentTestWord.meaning, valB);
+        renderCellContent(w.meaning, valB);
         back.appendChild(valB);
         
-        // Add pronunciation or memory Sentence inside back
-        if (currentTestWord.pronunciation) {
+        if (w.pronunciation) {
             const pDiv = document.createElement('div');
             pDiv.style.fontSize = '1.1rem';
             pDiv.style.color = 'var(--text-light)';
             pDiv.style.marginTop = '10px';
             pDiv.innerHTML = `Okunuşu: `;
             const pVal = document.createElement('span');
-            renderCellContent(currentTestWord.pronunciation, pVal);
+            renderCellContent(w.pronunciation, pVal);
             pDiv.appendChild(pVal);
             back.appendChild(pDiv);
         }
     } else {
         const valF = document.createElement('div');
         valF.style.fontSize = '2.5rem';
-        renderCellContent(currentTestWord.meaning, valF);
+        renderCellContent(w.meaning, valF);
         front.appendChild(valF);
         
         const valB = document.createElement('div');
         valB.style.fontSize = '2.2rem';
         valB.style.color = 'var(--primary-color)';
-        renderCellContent(currentTestWord.word, valB);
+        renderCellContent(w.word, valB);
         back.appendChild(valB);
     }
     
-    // Add memory Sentence if exists
-    if (currentTestWord.memorySentence) {
+    if (w.memorySentence) {
         const sDiv = document.createElement('div');
         sDiv.style.fontSize = '1.2rem';
         sDiv.style.marginTop = '15px';
         sDiv.style.borderTop = '1px dashed var(--border-color)';
         sDiv.style.paddingTop = '10px';
-        renderCellContent(currentTestWord.memorySentence, sDiv);
+        renderCellContent(w.memorySentence, sDiv);
         back.appendChild(sDiv);
     }
     
-    let countdown = timedDuration;
-    document.getElementById('memory-timer-display').textContent = `${countdown} saniye kaldı...`;
+    let countdown = memoryDuration;
+    const timerDisplay = document.getElementById('memory-timer-display');
+    if (timerDisplay) timerDisplay.textContent = `${countdown} saniye kaldı...`;
     
     function tick() {
         countdown--;
         if (countdown <= 0) {
-            // Flip card
-            card.classList.add('revealed');
-            document.getElementById('memory-timer-display').textContent = "Hafıza Kartı Çevrildi!";
-            document.getElementById('btn-next-memory').style.display = 'block';
+            if (card) card.classList.add('revealed');
+            if (timerDisplay) timerDisplay.textContent = "Hafıza Kartı Çevrildi!";
             logReportActivity('testSolved');
+            
+            if (memoryAutoAdvance) {
+                scheduleAutoNext();
+            }
         } else {
-            document.getElementById('memory-timer-display').textContent = `${countdown} saniye kaldı...`;
+            if (timerDisplay) timerDisplay.textContent = `${countdown} saniye kaldı...`;
             memoryTimerId = setTimeout(tick, 1000);
         }
     }
@@ -2577,8 +2780,46 @@ function startMemoryRound(wordsList) {
     memoryTimerId = setTimeout(tick, 1000);
 }
 
-function nextMemoryRound() {
-    startMemoryRound(wordsDatabase.filter(w => w.language === activeLang));
+function scheduleAutoNext() {
+    if (memoryAutoNextTimeoutId) clearTimeout(memoryAutoNextTimeoutId);
+    
+    const timerDisplay = document.getElementById('memory-timer-display');
+    let nextCount = 3;
+    
+    function autoTick() {
+        if (timerDisplay) timerDisplay.textContent = `${nextCount} saniye sonra sonraki kelimeye geçiliyor...`;
+        nextCount--;
+        if (nextCount < 0) {
+            nextMemoryCard();
+        } else {
+            memoryAutoNextTimeoutId = setTimeout(autoTick, 1000);
+        }
+    }
+    memoryAutoNextTimeoutId = setTimeout(autoTick, 1000);
+}
+
+function nextMemoryCard() {
+    startMemoryRoundAt(currentMemoryIndex + 1);
+}
+
+function prevMemoryCard() {
+    startMemoryRoundAt(currentMemoryIndex - 1);
+}
+
+function flipMemoryCardManual() {
+    const card = document.getElementById('memory-flashcard');
+    if (card) {
+        // Halt automatic timers on manual flip interaction
+        if (memoryAutoNextTimeoutId) clearTimeout(memoryAutoNextTimeoutId);
+        if (memoryTimerId) clearTimeout(memoryTimerId);
+        
+        card.classList.toggle('revealed');
+        
+        const timerDisplay = document.getElementById('memory-timer-display');
+        if (timerDisplay) {
+            timerDisplay.textContent = card.classList.contains('revealed') ? "Hafıza Kartı Çevrildi!" : "Süre Durduruldu.";
+        }
+    }
 }
 
 // REPORTS DISPLAY MODULE
@@ -2801,5 +3042,161 @@ function handleWordDocxUpload(event) {
     reader.readAsArrayBuffer(file);
     // Reset file input value to allow selecting same file again
     event.target.value = '';
+}
+
+// WRONG ANSWERS LOGGING SYSTEM (STUDY LIST FOR INCORRECT ANSWERS)
+function addWrongAnswer(wordObj, testName) {
+    if (!wordObj) return;
+    
+    // Retrieve existing list
+    let list = [];
+    try {
+        list = JSON.parse(localStorage.getItem('wrong_answers_list') || '[]');
+    } catch(e) {
+        list = [];
+    }
+    
+    // Ensure we don't duplicate the word in our study list
+    const exists = list.some(item => item.wordId === wordObj.id);
+    if (!exists) {
+        list.push({
+            wordId: wordObj.id,
+            wordText: getCleanText(wordObj.word.data),
+            meaningText: getCleanText(wordObj.meaning.data),
+            testName: testName,
+            language: activeLang,
+            addedAt: Date.now()
+        });
+        localStorage.setItem('wrong_answers_list', JSON.stringify(list));
+        loadWrongAnswersList();
+    }
+}
+
+function loadWrongAnswersList() {
+    let list = [];
+    try {
+        list = JSON.parse(localStorage.getItem('wrong_answers_list') || '[]');
+    } catch(e) {
+        list = [];
+    }
+    
+    // Filter by active language
+    list = list.filter(item => item.language === activeLang);
+    
+    const countEl = document.getElementById('wrong-answers-count');
+    if (countEl) countEl.textContent = list.length;
+    
+    const placeholder = document.getElementById('wrong-answers-placeholder');
+    const container = document.getElementById('wrong-answers-list');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (list.length === 0) {
+        if (placeholder) placeholder.classList.remove('hidden');
+        return;
+    }
+    
+    if (placeholder) placeholder.classList.add('hidden');
+    
+    list.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'wrong-answer-row';
+        row.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            gap: 15px;
+            flex-wrap: wrap;
+        `;
+        
+        const info = document.createElement('div');
+        info.style.cssText = `
+            flex: 1;
+            min-width: 250px;
+        `;
+        info.innerHTML = `
+            <div style="font-weight: bold; font-size: 1.1rem; color: var(--primary-color);">${item.wordText}</div>
+            <div style="font-size: 0.95rem; color: var(--text-color); margin: 3px 0;">Anlamı: <strong>${item.meaningText}</strong></div>
+            <div style="font-size: 0.8rem; color: var(--text-light);">Test: ${item.testName}</div>
+        `;
+        
+        const actions = document.createElement('div');
+        actions.style.cssText = `
+            display: flex;
+            gap: 8px;
+        `;
+        
+        const btnMemorized = document.createElement('button');
+        btnMemorized.className = 'btn-edit-word';
+        btnMemorized.style.cssText = `
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+        `;
+        btnMemorized.innerHTML = '✅ Ezberledim';
+        btnMemorized.onclick = () => {
+            removeWrongAnswer(item.wordId);
+        };
+        
+        const btnMoreStudy = document.createElement('button');
+        btnMoreStudy.className = 'btn-cancel-edit';
+        btnMoreStudy.style.cssText = `
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+        `;
+        btnMoreStudy.innerHTML = '📚 Biraz Daha Çalışacağım';
+        btnMoreStudy.onclick = () => {
+            alert('Bu kelime çalışmak için listede kalmaya devam edecek.');
+        };
+        
+        actions.appendChild(btnMemorized);
+        actions.appendChild(btnMoreStudy);
+        row.appendChild(info);
+        row.appendChild(actions);
+        container.appendChild(row);
+    });
+}
+
+function removeWrongAnswer(wordId) {
+    let list = [];
+    try {
+        list = JSON.parse(localStorage.getItem('wrong_answers_list') || '[]');
+    } catch(e) {
+        list = [];
+    }
+    list = list.filter(item => item.wordId !== wordId);
+    localStorage.setItem('wrong_answers_list', JSON.stringify(list));
+    loadWrongAnswersList();
+}
+
+function clearAllWrongAnswers() {
+    if (confirm("Yanlış cevaplar arşivindeki tüm kelimeleri temizlemek istediğinizden emin misiniz?")) {
+        let list = [];
+        try {
+            list = JSON.parse(localStorage.getItem('wrong_answers_list') || '[]');
+        } catch(e) {
+            list = [];
+        }
+        // Filter out active language items to clear only current language
+        list = list.filter(item => item.language !== activeLang);
+        localStorage.setItem('wrong_answers_list', JSON.stringify(list));
+        loadWrongAnswersList();
+    }
 }
 
