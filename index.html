@@ -281,8 +281,10 @@
                     <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
                     <h1>Alfabetik Kelime Listesi (<span id="total-words-count">0</span> Kelime)</h1>
                 </div>
-                <div class="header-right">
+                <div class="header-right" style="display: flex; gap: 8px; align-items: center;">
                     <input type="text" id="search-words-input" placeholder="Kelime ara..." oninput="filterAlphabeticalList()">
+                    <button class="btn-clear-selected hidden" id="btn-delete-selected" onclick="deleteSelectedWords()" title="Seçilen kelimeleri sil">🗑️ Seçilenleri Sil</button>
+                    <button class="btn-clear-all" onclick="clearAllWords()" title="Tüm kelimeleri sil">⚠️ Tümünü Temizle</button>
                 </div>
             </header>
 

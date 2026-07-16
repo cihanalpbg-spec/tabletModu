@@ -1269,6 +1269,17 @@ function renderWordCards(wordsList, containerElement) {
         const header = document.createElement('div');
         header.className = 'card-header-row';
         
+        // Checkbox for bulk deletion selection
+        const chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.className = 'card-select-checkbox';
+        chk.dataset.wordId = w.id;
+        chk.onclick = (e) => {
+            e.stopPropagation(); // Stop click from bubbling to card expansion
+            updateDeleteSelectedButtonVisibility();
+        };
+        header.appendChild(chk);
+        
         const titleSpan = document.createElement('div');
         titleSpan.className = 'card-word-title';
         renderCellContent(w.word, titleSpan);
@@ -1386,7 +1397,9 @@ function renderWordCards(wordsList, containerElement) {
         // Form field helper functions
         const getCellText = (cellObj) => {
             if (!cellObj) return '';
-            return cellObj.type === 'text' ? (cellObj.data || '') : '';
+            let val = cellObj.type === 'text' ? (cellObj.data || '') : '';
+            // Strip any HTML tags (like <p>, <strong>, etc.) to keep inputs clean for the user!
+            return val.replace(/<\/?[^>]+(>|$)/g, "").trim();
         };
         
         const updateCellFromInput = (oldCell, newText) => {
@@ -1584,9 +1597,10 @@ function renderWordCards(wordsList, containerElement) {
         
         card.appendChild(detailsDiv);
         
-        // Toggle expansion on card click (excluding inputs/actions)
+        // Toggle expansion on card click (excluding inputs/actions/checkbox)
         card.onclick = (e) => {
             if (e.target.closest('.btn-delete-word') || 
+                e.target.closest('.card-select-checkbox') ||
                 e.target.closest('.card-edit-mode') || 
                 e.target.closest('.card-actions-row') || 
                 e.target.closest('input') || 
@@ -1607,6 +1621,76 @@ function renderWordCards(wordsList, containerElement) {
         
         containerElement.appendChild(card);
     });
+}
+
+function updateDeleteSelectedButtonVisibility() {
+    const checked = document.querySelectorAll('.card-select-checkbox:checked').length;
+    const btn = document.getElementById('btn-delete-selected');
+    if (btn) {
+        if (checked > 0) {
+            btn.classList.remove('hidden');
+        } else {
+            btn.classList.add('hidden');
+        }
+    }
+}
+
+function deleteSelectedWords() {
+    const checkedBoxes = document.querySelectorAll('.card-select-checkbox:checked');
+    if (checkedBoxes.length === 0) return;
+    
+    if (confirm(`${checkedBoxes.length} adet seçilen kelimeyi silmek istediğinizden emin misiniz?`)) {
+        const idsToDelete = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.wordId, 10));
+        
+        // Perform deletion
+        let completed = 0;
+        idsToDelete.forEach(id => {
+            deleteWord(id, () => {
+                completed++;
+                if (completed === idsToDelete.length) {
+                    alert("Seçilen tüm kelimeler başarıyla silindi!");
+                    
+                    const btn = document.getElementById('btn-delete-selected');
+                    if (btn) btn.classList.add('hidden');
+                    
+                    getWords(() => {
+                        loadAlphabeticalList();
+                        loadArchiveList();
+                        updateReportUI();
+                    });
+                }
+            });
+        });
+    }
+}
+
+function clearAllWords() {
+    if (confirm("DİKKAT! Depodaki TÜM kelimeler kalıcı olarak silinecektir. Bu işlem geri alınamaz. Onaylıyor musunuz?")) {
+        if (confirm("Son kez soruyoruz: TÜM kelimeleri silmek istediğinizden kesinlikle emin misiniz?")) {
+            if (!db) {
+                localStorage.removeItem('words_backup');
+                alert("Tüm kelimeler silindi!");
+                loadAlphabeticalList();
+                loadArchiveList();
+                updateReportUI();
+                return;
+            }
+            const transaction = db.transaction(['words'], 'readwrite');
+            const store = transaction.objectStore('words');
+            const req = store.clear();
+            req.onsuccess = function() {
+                alert("Tüm kelimeler başarıyla silindi!");
+                const btn = document.getElementById('btn-delete-selected');
+                if (btn) btn.classList.add('hidden');
+                
+                getWords(() => {
+                    loadAlphabeticalList();
+                    loadArchiveList();
+                    updateReportUI();
+                });
+            };
+        }
+    }
 }
 
 function renderCellContent(cellObj, targetSpan) {
@@ -2629,52 +2713,71 @@ function handleWordDocxUpload(event) {
             .then(result => {
                 const html = result.value;
                 const doc = new DOMParser().parseFromString(html, 'text/html');
-                const table = doc.querySelector('table');
+                const tables = doc.querySelectorAll('table');
                 
-                if (!table) {
+                if (tables.length === 0) {
                     alert("Word belgesinde bir tablo bulunamadı! Lütfen belgenizde 6 sütunlu bir tablo olduğundan emin olun.");
-                    return;
-                }
-                
-                const rows = table.querySelectorAll('tr');
-                if (rows.length <= 1) {
-                    alert("Tabloda veri satırı bulunamadı! İlk satır başlık olarak atlanır.");
                     return;
                 }
                 
                 const parsedWords = [];
                 const todayStr = getTodayDateStr();
                 
-                // Start from index 1 to skip headers
-                for (let i = 1; i < rows.length; i++) {
-                    const cells = rows[i].querySelectorAll('td');
-                    if (cells.length >= 6) {
-                        const wordRaw = cells[0].innerHTML.trim();
-                        const wordClean = cells[0].textContent.replace(/<[^>]*>/g, '').toLowerCase().trim();
-                        const meaningRaw = cells[2].innerHTML.trim();
-                        
-                        // Ensure we have at least a word or a meaning
-                        if (wordClean || meaningRaw) {
-                            const wordObj = {
-                                id: Date.now() + i, // Unique ID per row
-                                language: activeLang,
-                                date: todayStr,
-                                word: { type: 'text', data: cells[0].innerHTML.trim() },
-                                pronunciation: { type: 'text', data: cells[1].innerHTML.trim() },
-                                meaning: { type: 'text', data: cells[2].innerHTML.trim() },
-                                memorySentence: { type: 'text', data: cells[3].innerHTML.trim() },
-                                synonyms: { type: 'text', data: cells[4].innerHTML.trim() },
-                                antonyms: { type: 'text', data: cells[5].innerHTML.trim() },
-                                wordText: wordClean || 'untitled_' + (Date.now() + i),
-                                createdAt: Date.now()
-                            };
-                            parsedWords.push(wordObj);
+                tables.forEach(table => {
+                    const rows = table.querySelectorAll('tr');
+                    if (rows.length <= 1) return;
+                    
+                    // Detect header row (skip if first cell has keywords like "word", "kelime", etc.)
+                    const firstRowCells = rows[0].querySelectorAll('td, th');
+                    let isHeader = false;
+                    if (firstRowCells.length > 0) {
+                        const cellText = firstRowCells[0].textContent.toLowerCase().trim();
+                        if (cellText.includes('kelime') || cellText.includes('word') || cellText.includes('sütun') || cellText.includes('column')) {
+                            isHeader = true;
                         }
                     }
-                }
+                    
+                    const startIdx = isHeader ? 1 : 0;
+                    
+                    for (let i = startIdx; i < rows.length; i++) {
+                        const cells = rows[i].querySelectorAll('td');
+                        if (cells.length >= 6) {
+                            const wordClean = cells[0].textContent.replace(/\s+/g, ' ').trim();
+                            const meaningClean = cells[2].textContent.replace(/\s+/g, ' ').trim();
+                            
+                            // Ensure we have at least a word or a meaning
+                            if (wordClean || meaningClean) {
+                                // Extract clean text content for all cells to strip formatting HTML tags
+                                const wordVal = cells[0].textContent.trim();
+                                const pronVal = cells[1].textContent.trim();
+                                const meaningVal = cells[2].textContent.trim();
+                                const memoryVal = cells[3].textContent.trim();
+                                const synVal = cells[4].textContent.trim();
+                                const antVal = cells[5].textContent.trim();
+                                
+                                const uniqueId = Date.now() + parsedWords.length + Math.floor(Math.random() * 10000);
+                                
+                                const wordObj = {
+                                    id: uniqueId,
+                                    language: activeLang,
+                                    date: todayStr,
+                                    word: { type: 'text', data: wordVal },
+                                    pronunciation: { type: 'text', data: pronVal },
+                                    meaning: { type: 'text', data: meaningVal },
+                                    memorySentence: { type: 'text', data: memoryVal },
+                                    synonyms: { type: 'text', data: synVal },
+                                    antonyms: { type: 'text', data: antVal },
+                                    wordText: wordClean.toLowerCase() || 'untitled_' + uniqueId,
+                                    createdAt: Date.now()
+                                };
+                                parsedWords.push(wordObj);
+                            }
+                        }
+                    }
+                });
                 
                 if (parsedWords.length === 0) {
-                    alert("Tablodan geçerli bir kelime okunamadı! Lütfen sütun düzenini kontrol edin.");
+                    alert("Tablolardan geçerli bir kelime okunamadı! Lütfen sütun düzenini kontrol edin.");
                     return;
                 }
                 

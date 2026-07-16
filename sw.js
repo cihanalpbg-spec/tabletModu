@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tablet-kelime-v5';
+const CACHE_NAME = 'tablet-kelime-v6';
 const ASSETS = [
   './',
   './index.html',

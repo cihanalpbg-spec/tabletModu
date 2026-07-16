@@ -2190,3 +2190,53 @@ input:checked + .slider:before {
     background-color: var(--primary-color);
     color: #ffffff;
 }
+
+/* Bulk deletion styles inside lists */
+.btn-clear-selected {
+    background-color: var(--danger-color);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-clear-selected:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+}
+
+.btn-clear-all {
+    background-color: rgba(255, 59, 48, 0.1);
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-clear-all:hover {
+    background-color: var(--danger-color);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* Card Checkbox styling */
+.card-select-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+    margin-right: 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
