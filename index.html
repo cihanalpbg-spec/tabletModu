@@ -401,5 +401,14 @@
 
     <!-- Script files -->
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker başarıyla kaydedildi:', reg))
+                    .catch(err => console.error('Service Worker kaydı başarısız:', err));
+            });
+        }
+    </script>
 </body>
 </html>
