@@ -605,8 +605,8 @@ function clearCanvasCell(cellId) {
     delete drawingStates[cellId];
 }
 
-// CANVAS DRAWING ENGINE (TABLET PEN SUPPORT WITH INTEGRATED DRAG/TAP DETECTION)
-let canvasStartPositions = {};
+// CANVAS DRAWING ENGINE (TABLET PEN SUPPORT WITH INTEGRATED DOUBLE-TAP FOCUS)
+let canvasLastTapTimes = {};
 
 function setupCanvas(canvas, cellId) {
     // Set width and height explicitly based on bounds
@@ -629,54 +629,58 @@ function setupCanvas(canvas, cellId) {
         ctx.shadowBlur = 0;
     }
     
-    // Bind touch / mouse events with drag-detection
+    // Touch/Pointer double-tap detection for mobile/tablet focus
     canvas.addEventListener('pointerdown', (e) => {
-        canvasStartPositions[cellId] = { x: e.clientX, y: e.clientY, isDrag: false };
+        const currentTime = Date.now();
+        const lastTap = canvasLastTapTimes[cellId] || 0;
+        const tapDelay = currentTime - lastTap;
+        
+        if (tapDelay < 300 && tapDelay > 0) {
+            // Double-tap detected! Activate text writing mode and skip drawing
+            activateTextInput(cellId);
+            canvasLastTapTimes[cellId] = 0; // Reset
+            e.preventDefault();
+            return;
+        }
+        
+        canvasLastTapTimes[cellId] = currentTime;
         startDrawing(e, canvas, ctx);
     });
     
     canvas.addEventListener('pointermove', (e) => {
-        if (isDrawing && canvasStartPositions[cellId]) {
-            const start = canvasStartPositions[cellId];
-            const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y);
-            if (dist > 6) {
-                start.isDrag = true;
-            }
+        if (isDrawing) {
             draw(e, canvas, ctx, cellId);
         }
     });
     
     canvas.addEventListener('pointerup', (e) => {
-        const start = canvasStartPositions[cellId];
         stopDrawing(canvas, cellId);
-        
-        if (start && !start.isDrag) {
-            // Tap/Click: Focus the text-input underneath and place cursor at the end
-            const textInput = document.getElementById(cellId);
-            if (textInput) {
-                textInput.focus();
-                
-                // Position caret at end of text input content
-                const range = document.createRange();
-                const sel = window.getSelection();
-                range.selectNodeContents(textInput);
-                range.collapse(false);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-        delete canvasStartPositions[cellId];
     });
     
     canvas.addEventListener('pointerout', () => {
         stopDrawing(canvas, cellId);
-        delete canvasStartPositions[cellId];
     });
     
-    // Clear canvas drawing on double click/tap
-    canvas.addEventListener('dblclick', () => {
-        clearCanvasCell(cellId);
+    // Double click listener for desktop mouse users
+    canvas.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        activateTextInput(cellId);
     });
+}
+
+function activateTextInput(cellId) {
+    const textInput = document.getElementById(cellId);
+    if (textInput) {
+        textInput.focus();
+        
+        // Position caret at end of text input content
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(textInput);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
 }
 
 function startDrawing(e, canvas, ctx) {
