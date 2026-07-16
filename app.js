@@ -1002,7 +1002,13 @@ function initSelectionColorListener() {
             // Wait slightly before hiding to allow color click event to trigger
             setTimeout(() => {
                 const sel = window.getSelection().toString().trim();
-                if (sel.lfunction hideColorPicker() {
+                if (sel.length === 0) hideColorPicker();
+            }, 100);
+        }
+    });
+}
+
+function hideColorPicker() {
     document.getElementById('floating-color-picker').classList.add('hidden');
     window.getSelection().removeAllRanges(); // Clear selection range to prevent selectionchange re-triggering
     selectedRange = null;
