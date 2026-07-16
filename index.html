@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tablet Kelime Uygulaması - Tablet Modu</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tablet Kelime">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Playpen+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Mammoth.js for Word (.docx) table parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+    <!-- App Wrapper -->
+    <div id="app-container">
+        
+        <!-- SIDEBAR / NAVIGATION PANEL -->
+        <aside id="app-sidebar" class="hidden">
+            <div class="sidebar-header">
+                <span class="logo-text">Kelime Modu</span>
+                <button class="btn-close-sidebar" onclick="toggleSidebar()">×</button>
+            </div>
+            <nav class="sidebar-menu">
+                <button onclick="switchScreen('screen-dashboard')" class="menu-item active" id="menu-dash">
+                    <span class="icon">📋</span> 20'li Tablo Girişi
+                </button>
+                <button onclick="switchScreen('screen-word-lists')" class="menu-item" id="menu-lists">
+                    <span class="icon">🔤</span> Alfabetik Kelime Listesi
+                </button>
+                <button onclick="switchScreen('screen-archive')" class="menu-item" id="menu-archive">
+                    <span class="icon">📅</span> Tarihsel Arşiv
+                </button>
+                <button onclick="switchScreen('screen-tests')" class="menu-item" id="menu-tests">
+                    <span class="icon">🧠</span> Test & Oyun Alanı
+                </button>
+                <button onclick="switchScreen('screen-reports')" class="menu-item" id="menu-reports">
+                    <span class="icon">📊</span> Günlük Raporlar
+                </button>
+                <button onclick="switchScreen('screen-settings')" class="menu-item" id="menu-settings">
+                    <span class="icon">⚙️</span> Arayüz Ayarları
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-change-lang" onclick="goHome()">🏠 Dil Değiştir</button>
+            </div>
+        </aside>
+
+        <!-- SCREEN 1: HOME / LANGUAGE SELECTION -->
+        <section id="screen-home" class="screen active">
+            <div class="home-hero">
+                <img src="logo.png" alt="BMC Logo" class="home-logo">
+                <h1 class="glow-title">Tablet Kelime Merkezi</h1>
+                <p class="subtitle">Tablet kalemi veya klavye ile çalışabileceğiniz profesyonel kelime dağarcığı geliştirme platformu</p>
+            </div>
+            
+            <div class="lang-selection-container">
+                <h2>Çalışmak İstediğiniz Dili Seçin</h2>
+                <div class="language-grid">
+                    <div class="lang-card" onclick="selectLanguage('english', 'İngilizce')">
+                        <div class="flag-wrapper">🇺🇸</div>
+                        <h3>İngilizce</h3>
+                    </div>
+                    <div class="lang-card" onclick="selectLanguage('german', 'Almanca')">
+                        <div class="flag-wrapper">🇩🇪</div>
+                        <h3>Almanca</h3>
+                    </div>
+                    <div class="lang-card" onclick="selectLanguage('french', 'Fransızca')">
+                        <div class="flag-wrapper">🇫🇷</div>
+                        <h3>Fransızca</h3>
+                    </div>
+                    <div class="lang-card" onclick="selectLanguage('italian', 'İtalyanca')">
+                        <div class="flag-wrapper">🇮🇹</div>
+                        <h3>İtalyanca</h3>
+                    </div>
+                    <div class="lang-card" onclick="selectLanguage('japanese', 'Japonca')">
+                        <div class="flag-wrapper">🇯🇵</div>
+                        <h3>Japonca</h3>
+                    </div>
+                    <div class="lang-card" onclick="selectLanguage('hebrew', 'İbranice')">
+                        <div class="flag-wrapper">🇮🇱</div>
+                        <h3>İbranice (İsrail)</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: MAIN DASHBOARD (20-ROW WORD TEMPLATE) -->
+        <section id="screen-dashboard" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
+                    <h1 id="dashboard-title">İngilizce Çalışma Masası</h1>
+                </div>
+                <div class="header-right">
+                    <div class="date-badge">Tarih: <span id="current-date-str">16.08.2026</span></div>
+                    <label class="btn-primary" style="margin-right: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" title="6 Sütunlu Word Tablosu Yükle">
+                        📥 Word Yükle
+                        <input type="file" id="word-file-upload" accept=".docx" style="display: none;" onchange="handleWordDocxUpload(event)">
+                    </label>
+                    <button class="btn-clear" onclick="clearCurrentTable()">🗑️ Temizle</button>
+                    <button class="btn-save" onclick="saveCurrentTable()">💾 Kaydet</button>
+                </div>
+            </header>
+
+            <div class="table-container-outer">
+                <table class="word-input-table" id="word-input-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">Satır</th>
+                            <th style="width: 15%;">KELİME</th>
+                            <th style="width: 15%;">Türkçe Okunuşu</th>
+                            <th style="width: 15%;">TÜRKÇE ANLAMI</th>
+                            <th style="width: 25%;">HAFIZA CÜMLESİ</th>
+                            <th style="width: 12.5%;">Eş Anlamlıları</th>
+                            <th style="width: 12.5%;">Zıt Anlamlıları</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- 20 Rows dynamically generated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Stack Version (shown on small screens) -->
+            <div id="mobile-cards-container" class="mobile-only-cards">
+                <!-- Mobile row cards dynamically injected here -->
+            </div>
+        </section>
+
+        <!-- SCREEN 3: ALPHABETICAL WORD LIST -->
+        <section id="screen-word-lists" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
+                    <h1>Alfabetik Kelime Listesi (<span id="total-words-count">0</span> Kelime)</h1>
+                </div>
+                <div class="header-right">
+                    <input type="text" id="search-words-input" placeholder="Kelime ara..." oninput="filterAlphabeticalList()">
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="alphabet-nav" id="alphabet-nav">
+                    <!-- A-Z letters injected here -->
+                </div>
+                <div class="list-display-container">
+                    <div id="no-words-placeholder" class="placeholder-msg">
+                        📭 Henüz hiç kelime eklenmemiş. Tablo bölümünden yeni kelimeler ekleyin!
+                    </div>
+                    <div class="words-grid-view" id="alphabetical-words-grid">
+                        <!-- Word blocks injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: HISTORICAL ARCHIVE -->
+        <section id="screen-archive" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
+                    <h1>Tarihsel Arşiv</h1>
+                </div>
+            </header>
+
+            <div class="content-body archive-layout">
+                <div class="archive-left-pane">
+                    <h3>Kayıtlı Tarihler</h3>
+                    <ul class="date-list" id="archive-date-list">
+                        <!-- Dates injected here -->
+                    </ul>
+                </div>
+                <div class="archive-right-pane">
+                    <h3 id="archive-selected-date-title">Lütfen bir tarih seçin</h3>
+                    <div id="archive-words-placeholder" class="placeholder-msg">
+                        📅 Sol menüden tarih seçerek o gün eklenen kelimeleri görebilirsiniz.
+                    </div>
+                    <div class="words-grid-view hidden" id="archive-words-grid">
+                        <!-- Words for selected date injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: TESTING & GAMES AREA -->
+        <section id="screen-tests" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
+                    <h1>Kelime Testi & Oyun Alanı</h1>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="game-modes-grid">
+                    <!-- Adam Asmaca -->
+                    <div class="game-card" onclick="initGame('hangman')">
+                        <div class="game-card-icon">🪓</div>
+                        <h3>Adam Asmaca</h3>
+                        <p>Türkçe-İngilizce kelime tahmin oyunu. Harfleri tahmin ederek kelimeyi asılmadan bulun!</p>
+                    </div>
+
+                    <!-- Kelime Eşleştirme -->
+                    <div class="game-card" onclick="initGame('matching')">
+                        <div class="game-card-icon">🧩</div>
+                        <h3>Kelime Eşleştirme</h3>
+                        <p>Kelimeleri ve Türkçe anlamlarını birbirleriyle eşleştirin. Hafızanızı hızlandırın!</p>
+                    </div>
+
+                    <!-- İngilizce -> Türkçe -->
+                    <div class="game-card" onclick="initGame('en-tr')">
+                        <div class="game-card-icon">🔄</div>
+                        <h3>Kelime Anlamı (Hedef Dil ➔ TR)</h3>
+                        <p>Hedef dildeki kelimeyi verip Türkçe anlamını test eder.</p>
+                    </div>
+
+                    <!-- Türkçe -> İngilizce -->
+                    <div class="game-card" onclick="initGame('tr-en')">
+                        <div class="game-card-icon">🔄</div>
+                        <h3>Kelime Bulucu (TR ➔ Hedef Dil)</h3>
+                        <p>Türkçe anlamını verip hedef dildeki doğru kelimeyi sorar.</p>
+                    </div>
+
+                    <!-- 5 Şıklı Çoktan Seçmeli Sınav -->
+                    <div class="game-card" id="five-options-card" onclick="initGame('five-options')">
+                        <div class="game-card-icon">🎯</div>
+                        <h3>5 Şıklı Çoktan Seçmeli Test</h3>
+                        <p class="lock-hint">🔒 Arşivde en az 50 kelime olmalıdır.</p>
+                    </div>
+
+                    <!-- Zaman Ayarlı Kelime Oyunu -->
+                    <div class="game-card" onclick="initGame('timed')">
+                        <div class="game-card-icon">⏱️</div>
+                        <h3>Zaman Ayarlı Kelime Testi</h3>
+                        <p>Kelime ekranda 3-5-7-10 saniye görünür ve kaybolur. Sonra 8 şıktan anlamını bulun!</p>
+                    </div>
+
+                    <!-- Hafızaya Alma (Flashcards) -->
+                    <div class="game-card" onclick="initGame('memory')">
+                        <div class="game-card-icon">💡</div>
+                        <h3>Hafızaya Alma (Smart Recall)</h3>
+                        <p>Süre ayarlı olarak kelime belirir, ardından otomatik olarak karşılığı gelir. Ezber gücü!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 6: GAME PLAYGROUND -->
+        <section id="screen-playground" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-back" onclick="switchScreen('screen-tests')">⟵ Test Menüsüne Dön</button>
+                    <h1 id="playground-title">Oyun Alanı</h1>
+                </div>
+                <div class="header-right">
+                    <div class="score-badge">Skor: <span id="game-score">0</span></div>
+                </div>
+            </header>
+
+            <div class="playground-body" id="playground-body">
+                <!-- Dynamic game interface will be generated here -->
+            </div>
+        </section>
+
+        <!-- SCREEN 7: REPORTS -->
+        <section id="screen-reports" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
+                    <h1>Günlük Raporlar ve İstatistikler</h1>
+                </div>
+            </header>
+
+            <div class="content-body report-layout">
+                <div class="report-summary-cards">
+                    <div class="report-card">
+                        <h3>Toplam Kayıtlı Kelime</h3>
+                        <span class="report-num" id="rep-total-words">0</span>
+                    </div>
+                    <div class="report-card">
+                        <h3>Bugün Yazılan Kelime</h3>
+                        <span class="report-num" id="rep-today-words">0</span>
+                    </div>
+                    <div class="report-card">
+                        <h3>Bugün Çözülen Test</h3>
+                        <span class="report-num" id="rep-today-tests">0</span>
+                    </div>
+                    <div class="report-card">
+                        <h3>Test Başarı Oranı</h3>
+                        <span class="report-num" id="rep-success-rate">0%</span>
+                    </div>
+                </div>
+
+                <div class="report-details-box">
+                    <h3>Gün Gün İlerleme Raporu</h3>
+                    <div class="report-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Yazılan Kelime</th>
+                                    <th>Çözülen Soru</th>
+                                    <th>Doğru Soru</th>
+                                    <th>Yanlış Soru</th>
+                                    <th>Başarı Oranı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <!-- Log reports here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 8: SETTINGS & CUSTOMIZATION -->
+        <section id="screen-settings" class="screen">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn-menu" onclick="toggleSidebar()">☰ Menu</button>
+                    <h1>Arayüz ve Tema Ayarları</h1>
+                </div>
+            </header>
+
+            <div class="content-body settings-layout">
+                <div class="settings-card">
+                    <h3>🎨 Arayüz Renk Teması</h3>
+                    <p>Uygulamanın genel rengini dilediğiniz gibi ayarlayın:</p>
+                    <div class="theme-picker-grid">
+                        <button class="theme-btn theme-blue active" onclick="setThemeColor('blue')">Derin Mavi</button>
+                        <button class="theme-btn theme-purple" onclick="setThemeColor('purple')">Asil Mor</button>
+                        <button class="theme-btn theme-teal" onclick="setThemeColor('teal')">Zümrüt Yeşil/Turkuaz</button>
+                        <button class="theme-btn theme-sepia" onclick="setThemeColor('sepia')">Sıcak Sepya</button>
+                        <button class="theme-btn theme-orange" onclick="setThemeColor('orange')">Enerjik Turuncu</button>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3>✏️ Karatahta Modu (Chalkboard Style)</h3>
+                    <p>Arka planı nostaljik, tebeşirle yazılan eski bir karatahtaya dönüştürün:</p>
+                    <div class="toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" id="chalkboard-toggle" onchange="toggleChalkboardMode()">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="toggle-label" id="chalkboard-status-label">Karatahta Modu Kapalı</span>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3>📦 Veri Yönetimi (Yedekleme ve Ticari Dağıtım)</h3>
+                    <p>Kelimelerinizi yedekleyin veya ticari sürüm için dışa aktarın:</p>
+                    <div class="settings-actions">
+                        <button class="btn-primary" onclick="exportBackupData()">💾 Verileri Dışa Aktar (JSON)</button>
+                        <label class="btn-primary-label">
+                            📥 Yedek Yükle (JSON)
+                            <input type="file" id="import-file-input" accept=".json" onchange="importBackupData(event)" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLOATING COLOR PICKER (FOR SELECTED TEXT COLORING) -->
+        <div id="floating-color-picker" class="color-picker-tooltip hidden">
+            <span class="color-picker-title">Yazı Rengi:</span>
+            <div class="color-bubbles">
+                <button class="color-bubble" style="background-color: #ff3b30;" onclick="applyColor('#ff3b30')"></button>
+                <button class="color-bubble" style="background-color: #34c759;" onclick="applyColor('#34c759')"></button>
+                <button class="color-bubble" style="background-color: #007aff;" onclick="applyColor('#007aff')"></button>
+                <button class="color-bubble" style="background-color: #ffcc00;" onclick="applyColor('#ffcc00')"></button>
+                <button class="color-bubble" style="background-color: #af52de;" onclick="applyColor('#af52de')"></button>
+                <button class="color-bubble" style="background-color: #ff9500;" onclick="applyColor('#ff9500')"></button>
+                <button class="color-bubble" style="background-color: var(--text-color);" onclick="applyColor('')" title="Varsayılan"></button>
+            </div>
+            <button class="btn-close-picker" onclick="hideColorPicker()">×</button>
+        </div>
+
+        <!-- VIRTUAL KEYBOARD DRAWER -->
+        <div id="virtual-keyboard-drawer" class="keyboard-drawer hidden">
+            <div class="keyboard-header">
+                <span id="keyboard-lang-label">Sanal Klavye (İngilizce)</span>
+                <button class="btn-close-keyboard" onclick="toggleVirtualKeyboard(false)">Klavye Kapat ✖</button>
+            </div>
+            <div class="keyboard-keys" id="keyboard-keys-container">
+                <!-- Keys will be injected here depending on the active language -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script files -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1709 @@
+{
+  "words": [
+    {
+      "id": 100001,
+      "language": "english",
+      "date": "16.08.2026",
+      "createdAt": 1786834800000,
+      "wordText": "awning",
+      "word": {
+        "type": "text",
+        "data": "awning"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "Onin"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "Güneşlik"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "<span style='color: #ff3b30;'>Avni</span> İngilizceyi <span style='color: #ff3b30;'>güneşliğin</span> altında öğrendi."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "canopy, shade"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "-"
+      }
+    },
+    {
+      "id": 100002,
+      "language": "english",
+      "date": "16.08.2026",
+      "createdAt": 1786834801000,
+      "wordText": "comprehend",
+      "word": {
+        "type": "text",
+        "data": "comprehend"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "komprihend"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "kavramak, anlamak"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "<span style='color: #007aff;'>Komşu</span> mantığı <span style='color: #007aff;'>kavramakta</span> zorlanıyor."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "understand, grasp"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "misunderstand"
+      }
+    },
+    {
+      "id": 100003,
+      "language": "german",
+      "date": "16.08.2026",
+      "createdAt": 1786834802000,
+      "wordText": "entscheidung",
+      "word": {
+        "type": "text",
+        "data": "Entscheidung"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "entşaydung"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "Karar"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "En son <span style='color: #af52de;'>çaydanlık</span> alımında nihai <span style='color: #af52de;'>kararı</span> verdi."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "Beschluss, Wahl"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "-"
+      }
+    },
+    {
+      "id": 100004,
+      "language": "french",
+      "date": "16.08.2026",
+      "createdAt": 1786834803000,
+      "wordText": "decouvrir",
+      "word": {
+        "type": "text",
+        "data": "découvrir"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "dekuvrir"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "keşfetmek"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "<span style='color: #34c759;'>Dekoratif</span> virajları <span style='color: #34c759;'>keşfetti</span>."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "trouver, explorer"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "cacher"
+      }
+    },
+    {
+      "id": 100005,
+      "language": "japanese",
+      "date": "16.08.2026",
+      "createdAt": 1786834804000,
+      "wordText": "ringo",
+      "word": {
+        "type": "text",
+        "data": "りんご (Ringo)"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "ringo"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "Elma"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "<span style='color: #ff9500;'>Ringde</span> dövüşenler <span style='color: #ff9500;'>elma</span> yiyor."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "-"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "-"
+      }
+    },
+    {
+      "id": 200001,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200001,
+      "wordText": "testword1",
+      "word": {
+        "type": "text",
+        "data": "TestWord_1"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_1"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_1"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 1."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_1"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_1"
+      }
+    },
+    {
+      "id": 200002,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200002,
+      "wordText": "testword2",
+      "word": {
+        "type": "text",
+        "data": "TestWord_2"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_2"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_2"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 2."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_2"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_2"
+      }
+    },
+    {
+      "id": 200003,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200003,
+      "wordText": "testword3",
+      "word": {
+        "type": "text",
+        "data": "TestWord_3"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_3"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_3"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 3."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_3"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_3"
+      }
+    },
+    {
+      "id": 200004,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200004,
+      "wordText": "testword4",
+      "word": {
+        "type": "text",
+        "data": "TestWord_4"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_4"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_4"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 4."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_4"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_4"
+      }
+    },
+    {
+      "id": 200005,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200005,
+      "wordText": "testword5",
+      "word": {
+        "type": "text",
+        "data": "TestWord_5"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_5"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_5"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 5."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_5"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_5"
+      }
+    },
+    {
+      "id": 200006,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200006,
+      "wordText": "testword6",
+      "word": {
+        "type": "text",
+        "data": "TestWord_6"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_6"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_6"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 6."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_6"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_6"
+      }
+    },
+    {
+      "id": 200007,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200007,
+      "wordText": "testword7",
+      "word": {
+        "type": "text",
+        "data": "TestWord_7"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_7"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_7"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 7."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_7"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_7"
+      }
+    },
+    {
+      "id": 200008,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200008,
+      "wordText": "testword8",
+      "word": {
+        "type": "text",
+        "data": "TestWord_8"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_8"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_8"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 8."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_8"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_8"
+      }
+    },
+    {
+      "id": 200009,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200009,
+      "wordText": "testword9",
+      "word": {
+        "type": "text",
+        "data": "TestWord_9"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_9"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_9"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 9."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_9"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_9"
+      }
+    },
+    {
+      "id": 200010,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200010,
+      "wordText": "testword10",
+      "word": {
+        "type": "text",
+        "data": "TestWord_10"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_10"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_10"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 10."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_10"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_10"
+      }
+    },
+    {
+      "id": 200011,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200011,
+      "wordText": "testword11",
+      "word": {
+        "type": "text",
+        "data": "TestWord_11"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_11"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_11"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 11."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_11"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_11"
+      }
+    },
+    {
+      "id": 200012,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200012,
+      "wordText": "testword12",
+      "word": {
+        "type": "text",
+        "data": "TestWord_12"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_12"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_12"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 12."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_12"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_12"
+      }
+    },
+    {
+      "id": 200013,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200013,
+      "wordText": "testword13",
+      "word": {
+        "type": "text",
+        "data": "TestWord_13"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_13"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_13"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 13."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_13"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_13"
+      }
+    },
+    {
+      "id": 200014,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200014,
+      "wordText": "testword14",
+      "word": {
+        "type": "text",
+        "data": "TestWord_14"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_14"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_14"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 14."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_14"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_14"
+      }
+    },
+    {
+      "id": 200015,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200015,
+      "wordText": "testword15",
+      "word": {
+        "type": "text",
+        "data": "TestWord_15"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_15"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_15"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 15."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_15"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_15"
+      }
+    },
+    {
+      "id": 200016,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200016,
+      "wordText": "testword16",
+      "word": {
+        "type": "text",
+        "data": "TestWord_16"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_16"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_16"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 16."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_16"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_16"
+      }
+    },
+    {
+      "id": 200017,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200017,
+      "wordText": "testword17",
+      "word": {
+        "type": "text",
+        "data": "TestWord_17"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_17"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_17"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 17."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_17"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_17"
+      }
+    },
+    {
+      "id": 200018,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200018,
+      "wordText": "testword18",
+      "word": {
+        "type": "text",
+        "data": "TestWord_18"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_18"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_18"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 18."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_18"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_18"
+      }
+    },
+    {
+      "id": 200019,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200019,
+      "wordText": "testword19",
+      "word": {
+        "type": "text",
+        "data": "TestWord_19"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_19"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_19"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 19."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_19"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_19"
+      }
+    },
+    {
+      "id": 200020,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200020,
+      "wordText": "testword20",
+      "word": {
+        "type": "text",
+        "data": "TestWord_20"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_20"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_20"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 20."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_20"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_20"
+      }
+    },
+    {
+      "id": 200021,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200021,
+      "wordText": "testword21",
+      "word": {
+        "type": "text",
+        "data": "TestWord_21"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_21"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_21"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 21."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_21"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_21"
+      }
+    },
+    {
+      "id": 200022,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200022,
+      "wordText": "testword22",
+      "word": {
+        "type": "text",
+        "data": "TestWord_22"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_22"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_22"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 22."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_22"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_22"
+      }
+    },
+    {
+      "id": 200023,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200023,
+      "wordText": "testword23",
+      "word": {
+        "type": "text",
+        "data": "TestWord_23"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_23"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_23"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 23."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_23"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_23"
+      }
+    },
+    {
+      "id": 200024,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200024,
+      "wordText": "testword24",
+      "word": {
+        "type": "text",
+        "data": "TestWord_24"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_24"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_24"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 24."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_24"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_24"
+      }
+    },
+    {
+      "id": 200025,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200025,
+      "wordText": "testword25",
+      "word": {
+        "type": "text",
+        "data": "TestWord_25"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_25"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_25"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 25."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_25"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_25"
+      }
+    },
+    {
+      "id": 200026,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200026,
+      "wordText": "testword26",
+      "word": {
+        "type": "text",
+        "data": "TestWord_26"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_26"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_26"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 26."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_26"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_26"
+      }
+    },
+    {
+      "id": 200027,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200027,
+      "wordText": "testword27",
+      "word": {
+        "type": "text",
+        "data": "TestWord_27"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_27"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_27"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 27."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_27"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_27"
+      }
+    },
+    {
+      "id": 200028,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200028,
+      "wordText": "testword28",
+      "word": {
+        "type": "text",
+        "data": "TestWord_28"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_28"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_28"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 28."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_28"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_28"
+      }
+    },
+    {
+      "id": 200029,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200029,
+      "wordText": "testword29",
+      "word": {
+        "type": "text",
+        "data": "TestWord_29"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_29"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_29"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 29."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_29"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_29"
+      }
+    },
+    {
+      "id": 200030,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200030,
+      "wordText": "testword30",
+      "word": {
+        "type": "text",
+        "data": "TestWord_30"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_30"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_30"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 30."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_30"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_30"
+      }
+    },
+    {
+      "id": 200031,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200031,
+      "wordText": "testword31",
+      "word": {
+        "type": "text",
+        "data": "TestWord_31"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_31"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_31"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 31."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_31"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_31"
+      }
+    },
+    {
+      "id": 200032,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200032,
+      "wordText": "testword32",
+      "word": {
+        "type": "text",
+        "data": "TestWord_32"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_32"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_32"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 32."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_32"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_32"
+      }
+    },
+    {
+      "id": 200033,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200033,
+      "wordText": "testword33",
+      "word": {
+        "type": "text",
+        "data": "TestWord_33"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_33"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_33"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 33."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_33"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_33"
+      }
+    },
+    {
+      "id": 200034,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200034,
+      "wordText": "testword34",
+      "word": {
+        "type": "text",
+        "data": "TestWord_34"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_34"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_34"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 34."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_34"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_34"
+      }
+    },
+    {
+      "id": 200035,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200035,
+      "wordText": "testword35",
+      "word": {
+        "type": "text",
+        "data": "TestWord_35"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_35"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_35"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 35."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_35"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_35"
+      }
+    },
+    {
+      "id": 200036,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200036,
+      "wordText": "testword36",
+      "word": {
+        "type": "text",
+        "data": "TestWord_36"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_36"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_36"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 36."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_36"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_36"
+      }
+    },
+    {
+      "id": 200037,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200037,
+      "wordText": "testword37",
+      "word": {
+        "type": "text",
+        "data": "TestWord_37"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_37"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_37"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 37."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_37"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_37"
+      }
+    },
+    {
+      "id": 200038,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200038,
+      "wordText": "testword38",
+      "word": {
+        "type": "text",
+        "data": "TestWord_38"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_38"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_38"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 38."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_38"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_38"
+      }
+    },
+    {
+      "id": 200039,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200039,
+      "wordText": "testword39",
+      "word": {
+        "type": "text",
+        "data": "TestWord_39"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_39"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_39"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 39."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_39"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_39"
+      }
+    },
+    {
+      "id": 200040,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200040,
+      "wordText": "testword40",
+      "word": {
+        "type": "text",
+        "data": "TestWord_40"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_40"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_40"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 40."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_40"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_40"
+      }
+    },
+    {
+      "id": 200041,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200041,
+      "wordText": "testword41",
+      "word": {
+        "type": "text",
+        "data": "TestWord_41"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_41"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_41"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 41."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_41"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_41"
+      }
+    },
+    {
+      "id": 200042,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200042,
+      "wordText": "testword42",
+      "word": {
+        "type": "text",
+        "data": "TestWord_42"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_42"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_42"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 42."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_42"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_42"
+      }
+    },
+    {
+      "id": 200043,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200043,
+      "wordText": "testword43",
+      "word": {
+        "type": "text",
+        "data": "TestWord_43"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_43"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_43"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 43."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_43"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_43"
+      }
+    },
+    {
+      "id": 200044,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200044,
+      "wordText": "testword44",
+      "word": {
+        "type": "text",
+        "data": "TestWord_44"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_44"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_44"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 44."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_44"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_44"
+      }
+    },
+    {
+      "id": 200045,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200045,
+      "wordText": "testword45",
+      "word": {
+        "type": "text",
+        "data": "TestWord_45"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_45"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_45"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 45."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_45"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_45"
+      }
+    },
+    {
+      "id": 200046,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200046,
+      "wordText": "testword46",
+      "word": {
+        "type": "text",
+        "data": "TestWord_46"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_46"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_46"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 46."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_46"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_46"
+      }
+    },
+    {
+      "id": 200047,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200047,
+      "wordText": "testword47",
+      "word": {
+        "type": "text",
+        "data": "TestWord_47"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_47"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_47"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 47."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_47"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_47"
+      }
+    },
+    {
+      "id": 200048,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200048,
+      "wordText": "testword48",
+      "word": {
+        "type": "text",
+        "data": "TestWord_48"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_48"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_48"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 48."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_48"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_48"
+      }
+    },
+    {
+      "id": 200049,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200049,
+      "wordText": "testword49",
+      "word": {
+        "type": "text",
+        "data": "TestWord_49"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_49"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_49"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 49."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_49"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_49"
+      }
+    },
+    {
+      "id": 200050,
+      "language": "english",
+      "date": "17.08.2026",
+      "createdAt": 1786921200050,
+      "wordText": "testword50",
+      "word": {
+        "type": "text",
+        "data": "TestWord_50"
+      },
+      "pronunciation": {
+        "type": "text",
+        "data": "testvörd_50"
+      },
+      "meaning": {
+        "type": "text",
+        "data": "TestAnlami_50"
+      },
+      "memorySentence": {
+        "type": "text",
+        "data": "Bu bir test hafıza cümlesidir 50."
+      },
+      "synonyms": {
+        "type": "text",
+        "data": "synonym_50"
+      },
+      "antonyms": {
+        "type": "text",
+        "data": "antonym_50"
+      }
+    }
+  ]
+}
