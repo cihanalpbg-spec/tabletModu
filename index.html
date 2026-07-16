@@ -496,6 +496,20 @@
                 </div>
 
                 <div class="settings-card">
+                    <h3>✒️ Yazı Vurgu Rengi</h3>
+                    <p>Karatahta girişlerindeki kelimeleri boyamak için varsayılan bir renk seçin:</p>
+                    <div class="highlight-picker-grid">
+                        <button class="highlight-color-bubble btn-color-red active" style="background-color: #ff3b30;" onclick="setHighlightColor('#ff3b30')" title="Kırmızı"></button>
+                        <button class="highlight-color-bubble btn-color-green" style="background-color: #34c759;" onclick="setHighlightColor('#34c759')" title="Yeşil"></button>
+                        <button class="highlight-color-bubble btn-color-blue" style="background-color: #007aff;" onclick="setHighlightColor('#007aff')" title="Mavi"></button>
+                        <button class="highlight-color-bubble btn-color-yellow" style="background-color: #ffcc00;" onclick="setHighlightColor('#ffcc00')" title="Sarı"></button>
+                        <button class="highlight-color-bubble btn-color-purple" style="background-color: #af52de;" onclick="setHighlightColor('#af52de')" title="Mor"></button>
+                        <button class="highlight-color-bubble btn-color-orange" style="background-color: #ff9500;" onclick="setHighlightColor('#ff9500')" title="Turuncu"></button>
+                        <button class="highlight-color-bubble btn-color-default" style="background-color: var(--text-color);" onclick="setHighlightColor('')" title="Varsayılan"></button>
+                    </div>
+                </div>
+
+                <div class="settings-card">
                     <h3>📦 Veri Yönetimi (Yedekleme ve Ticari Dağıtım)</h3>
                     <p>Kelimelerinizi yedekleyin veya ticari sürüm için dışa aktarın:</p>
                     <div class="settings-actions">
@@ -509,19 +523,10 @@
             </div>
         </section>
 
-        <!-- FLOATING COLOR PICKER (FOR SELECTED TEXT COLORING) -->
-        <div id="floating-color-picker" class="color-picker-tooltip hidden">
-            <span class="color-picker-title">Yazı Rengi:</span>
-            <div class="color-bubbles">
-                <button class="color-bubble" style="background-color: #ff3b30;" onclick="applyColor('#ff3b30')"></button>
-                <button class="color-bubble" style="background-color: #34c759;" onclick="applyColor('#34c759')"></button>
-                <button class="color-bubble" style="background-color: #007aff;" onclick="applyColor('#007aff')"></button>
-                <button class="color-bubble" style="background-color: #ffcc00;" onclick="applyColor('#ffcc00')"></button>
-                <button class="color-bubble" style="background-color: #af52de;" onclick="applyColor('#af52de')"></button>
-                <button class="color-bubble" style="background-color: #ff9500;" onclick="applyColor('#ff9500')"></button>
-                <button class="color-bubble" style="background-color: var(--text-color);" onclick="applyColor('')" title="Varsayılan"></button>
-            </div>
-            <button class="btn-close-picker" onclick="hideColorPicker()">×</button>
+        <!-- FLOATING TEXT HIGHLIGHT TOOLTIP (FOR SELECTED TEXT PAINTING) -->
+        <div id="text-highlight-tooltip" class="highlight-tooltip hidden">
+            <button class="btn-highlight-paint" onclick="applyHighlightColor()" title="Seçili Alanı Boya">🎨 Boya</button>
+            <button class="btn-highlight-clear" onclick="applyHighlightColor('')" title="Boyayı Temizle">🧹 Temizle</button>
         </div>
 
 

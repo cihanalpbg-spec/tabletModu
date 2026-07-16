@@ -285,9 +285,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadAppSettings() {
     themeColor = localStorage.getItem('theme_color') || 'blue';
     chalkboardMode = localStorage.getItem('chalkboard_mode') === 'true';
+    const highlight = localStorage.getItem('highlightColor') || '#ff3b30';
     
     // Apply Settings
     setThemeColor(themeColor);
+    setHighlightColor(highlight);
     document.getElementById('chalkboard-toggle').checked = chalkboardMode;
     if (chalkboardMode) {
         document.body.classList.add('chalkboard-mode');
@@ -970,8 +972,34 @@ function initChalkboardCanvases() {
 }
 
 // SELECTION & RICH TEXT COLOR TOOL
+let highlightColor = localStorage.getItem('highlightColor') || '#ff3b30';
+
+function setHighlightColor(color) {
+    highlightColor = color;
+    localStorage.setItem('highlightColor', color);
+    
+    // Sync class 'active' on Settings highlight bubbles
+    document.querySelectorAll('.highlight-color-bubble').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Map to specific button classes
+    let targetClass = 'btn-color-default';
+    if (color === '#ff3b30') targetClass = 'btn-color-red';
+    else if (color === '#34c759') targetClass = 'btn-color-green';
+    else if (color === '#007aff') targetClass = 'btn-color-blue';
+    else if (color === '#ffcc00') targetClass = 'btn-color-yellow';
+    else if (color === '#af52de') targetClass = 'btn-color-purple';
+    else if (color === '#ff9500') targetClass = 'btn-color-orange';
+    
+    const activeBtn = document.querySelector(`.highlight-color-bubble.${targetClass}`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+}
+
 function initSelectionColorListener() {
-    const picker = document.getElementById('floating-color-picker');
+    const tooltip = document.getElementById('text-highlight-tooltip');
     
     document.addEventListener('selectionchange', () => {
         const selection = window.getSelection();
@@ -988,18 +1016,19 @@ function initSelectionColorListener() {
             if (text.length > 0 && isInsideInput) {
                 selectedRange = range.cloneRange();
                 
-                // Position the toolbar above the selected text
+                // Position the tooltip above the selected text
                 const rect = range.getBoundingClientRect();
-                picker.classList.remove('hidden');
-                picker.style.top = `${rect.top + window.scrollY - 55}px`;
-                picker.style.left = `${rect.left + window.scrollX + (rect.width/2) - (picker.offsetWidth/2)}px`;
+                if (tooltip) {
+                    tooltip.classList.remove('hidden');
+                    tooltip.style.top = `${rect.top + window.scrollY - 50}px`;
+                    tooltip.style.left = `${rect.left + window.scrollX + (rect.width/2) - (tooltip.offsetWidth/2)}px`;
+                }
                 return;
             }
         }
         
-        // Hide picker if no selection
-        if (!picker.classList.contains('hidden')) {
-            // Wait slightly before hiding to allow color click event to trigger
+        // Hide tooltip if no selection
+        if (tooltip && !tooltip.classList.contains('hidden')) {
             setTimeout(() => {
                 const sel = window.getSelection().toString().trim();
                 if (sel.length === 0) hideColorPicker();
@@ -1009,12 +1038,14 @@ function initSelectionColorListener() {
 }
 
 function hideColorPicker() {
-    document.getElementById('floating-color-picker').classList.add('hidden');
+    const tooltip = document.getElementById('text-highlight-tooltip');
+    if (tooltip) tooltip.classList.add('hidden');
     window.getSelection().removeAllRanges(); // Clear selection range to prevent selectionchange re-triggering
     selectedRange = null;
 }
 
-function applyColor(color) {
+function applyHighlightColor(color) {
+    const targetColor = (color === undefined) ? highlightColor : color;
     if (!selectedRange) return;
     
     const selection = window.getSelection();
@@ -1023,7 +1054,8 @@ function applyColor(color) {
     
     // Apply styling
     document.execCommand('styleWithCSS', false, true);
-    document.execCommand('foreColor', false, color || '#2c3e50');
+    const fallbackColor = chalkboardMode ? '#f0f3f1' : '#2c3e50';
+    document.execCommand('foreColor', false, targetColor || fallbackColor);
     
     // Sync contents between mobile and desktop inputs
     let parentInput = selectedRange.commonAncestorContainer;
@@ -1271,6 +1303,10 @@ function renderWordCards(wordsList, containerElement) {
         const detailsDiv = document.createElement('div');
         detailsDiv.className = 'card-details-container';
         
+        // VIEW MODE CONTAINER
+        const viewModeDiv = document.createElement('div');
+        viewModeDiv.className = 'card-view-mode';
+        
         const fields = [
             { key: 'pronunciation', label: 'Okunuşu' },
             { key: 'meaning', label: 'Anlamı' },
@@ -1290,7 +1326,7 @@ function renderWordCards(wordsList, containerElement) {
                 spanVal.className = 'card-value';
                 
                 if (Array.isArray(val)) {
-                    // Render list (our new layout structure)
+                    // Render list
                     let hasAny = false;
                     val.forEach(item => {
                         const hasVal = item && (item.type === 'drawing' ? item.data : (item.data && item.data !== '...' && item.data !== '<br>' && item.data.trim() !== ''));
@@ -1314,21 +1350,246 @@ function renderWordCards(wordsList, containerElement) {
                     renderCellContent(val, spanVal);
                 }
                 fDiv.appendChild(spanVal);
-                detailsDiv.appendChild(fDiv);
+                viewModeDiv.appendChild(fDiv);
             }
         });
         
-        // Date stamp
+        // Date stamp and Edit Button row inside View Mode
+        const footerRow = document.createElement('div');
+        footerRow.className = 'card-footer-row';
+        
         const dateStamp = document.createElement('div');
         dateStamp.className = 'date-stamp';
         dateStamp.textContent = w.date || 'Tarihsiz';
-        detailsDiv.appendChild(dateStamp);
+        
+        const btnEdit = document.createElement('button');
+        btnEdit.className = 'btn-edit-word';
+        btnEdit.innerHTML = '✏️ Düzenle';
+        btnEdit.onclick = (e) => {
+            e.stopPropagation();
+            viewModeDiv.classList.add('hidden');
+            editModeDiv.classList.remove('hidden');
+        };
+        
+        footerRow.appendChild(dateStamp);
+        footerRow.appendChild(btnEdit);
+        viewModeDiv.appendChild(footerRow);
+        
+        // EDIT MODE CONTAINER
+        const editModeDiv = document.createElement('div');
+        editModeDiv.className = 'card-edit-mode hidden';
+        
+        // Form field helper functions
+        const getCellText = (cellObj) => {
+            if (!cellObj) return '';
+            return cellObj.type === 'text' ? (cellObj.data || '') : '';
+        };
+        
+        const updateCellFromInput = (oldCell, newText) => {
+            if (newText.trim() === '') {
+                if (oldCell && oldCell.type === 'drawing') {
+                    return oldCell; // Keep drawing if text is empty and drawing exists
+                }
+                return { type: 'text', data: '' };
+            }
+            return { type: 'text', data: newText };
+        };
+        
+        // Form Field: Word
+        const formFieldWord = document.createElement('div');
+        formFieldWord.className = 'edit-form-field';
+        formFieldWord.innerHTML = '<label class="edit-field-label">Kelime (Word):</label>';
+        const inputWord = document.createElement('input');
+        inputWord.type = 'text';
+        inputWord.className = 'card-edit-input';
+        inputWord.value = getCellText(w.word);
+        formFieldWord.appendChild(inputWord);
+        editModeDiv.appendChild(formFieldWord);
+        
+        // Form Field: Pronunciation
+        const formFieldPron = document.createElement('div');
+        formFieldPron.className = 'edit-form-field';
+        formFieldPron.innerHTML = '<label class="edit-field-label">Türkçe Okunuşu:</label>';
+        const inputPron = document.createElement('input');
+        inputPron.type = 'text';
+        inputPron.className = 'card-edit-input';
+        inputPron.value = getCellText(w.pronunciation);
+        formFieldPron.appendChild(inputPron);
+        editModeDiv.appendChild(formFieldPron);
+        
+        // Form Field: Meaning
+        const formFieldMeaning = document.createElement('div');
+        formFieldMeaning.className = 'edit-form-field';
+        formFieldMeaning.innerHTML = '<label class="edit-field-label">Türkçe Anlamı:</label>';
+        const inputMeaning = document.createElement('input');
+        inputMeaning.type = 'text';
+        inputMeaning.className = 'card-edit-input';
+        inputMeaning.value = getCellText(w.meaning);
+        formFieldMeaning.appendChild(inputMeaning);
+        editModeDiv.appendChild(formFieldMeaning);
+        
+        // Form Field: Memory Sentence
+        const formFieldMem = document.createElement('div');
+        formFieldMem.className = 'edit-form-field';
+        formFieldMem.innerHTML = '<label class="edit-field-label">Hafıza Cümlesi:</label>';
+        const textareaMem = document.createElement('textarea');
+        textareaMem.className = 'card-edit-textarea';
+        textareaMem.value = getCellText(w.memorySentence);
+        formFieldMem.appendChild(textareaMem);
+        editModeDiv.appendChild(formFieldMem);
+        
+        // Form Field: Synonyms
+        const formFieldSyn = document.createElement('div');
+        formFieldSyn.className = 'edit-form-field';
+        formFieldSyn.innerHTML = '<label class="edit-field-label">Eş Anlamlıları:</label>';
+        let inputSyns = [];
+        if (Array.isArray(w.synonyms)) {
+            const containerSyns = document.createElement('div');
+            containerSyns.className = 'edit-subfields-container';
+            for (let i = 0; i < 3; i++) {
+                const inp = document.createElement('input');
+                inp.type = 'text';
+                inp.className = 'card-edit-input sub-input';
+                inp.placeholder = `Eş anlam ${i+1}`;
+                inp.value = getCellText(w.synonyms[i]);
+                containerSyns.appendChild(inp);
+                inputSyns.push(inp);
+            }
+            formFieldSyn.appendChild(containerSyns);
+        } else {
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'card-edit-input';
+            inp.value = getCellText(w.synonyms);
+            formFieldSyn.appendChild(inp);
+            inputSyns.push(inp);
+        }
+        editModeDiv.appendChild(formFieldSyn);
+        
+        // Form Field: Antonyms
+        const formFieldAnt = document.createElement('div');
+        formFieldAnt.className = 'edit-form-field';
+        formFieldAnt.innerHTML = '<label class="edit-field-label">Zıt Anlamlıları:</label>';
+        let inputAnts = [];
+        if (Array.isArray(w.antonyms)) {
+            const containerAnts = document.createElement('div');
+            containerAnts.className = 'edit-subfields-container';
+            for (let i = 0; i < 3; i++) {
+                const inp = document.createElement('input');
+                inp.type = 'text';
+                inp.className = 'card-edit-input sub-input';
+                inp.placeholder = `Zıt anlam ${i+1}`;
+                inp.value = getCellText(w.antonyms[i]);
+                containerAnts.appendChild(inp);
+                inputAnts.push(inp);
+            }
+            formFieldAnt.appendChild(containerAnts);
+        } else {
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'card-edit-input';
+            inp.value = getCellText(w.antonyms);
+            formFieldAnt.appendChild(inp);
+            inputAnts.push(inp);
+        }
+        editModeDiv.appendChild(formFieldAnt);
+        
+        // Actions inside editModeDiv
+        const editActionsRow = document.createElement('div');
+        editActionsRow.className = 'card-actions-row';
+        
+        const btnSave = document.createElement('button');
+        btnSave.className = 'btn-save-edit';
+        btnSave.innerHTML = '💾 Kaydet';
+        btnSave.onclick = (e) => {
+            e.stopPropagation();
+            
+            // Perform Database Save
+            const newWord = updateCellFromInput(w.word, inputWord.value);
+            const newPron = updateCellFromInput(w.pronunciation, inputPron.value);
+            const newMeaning = updateCellFromInput(w.meaning, inputMeaning.value);
+            const newMem = updateCellFromInput(w.memorySentence, textareaMem.value);
+            
+            let newSyns;
+            if (Array.isArray(w.synonyms)) {
+                newSyns = inputSyns.map((inp, idx) => updateCellFromInput(w.synonyms[idx], inp.value));
+            } else {
+                newSyns = updateCellFromInput(w.synonyms, inputSyns[0].value);
+            }
+            
+            let newAnts;
+            if (Array.isArray(w.antonyms)) {
+                newAnts = inputAnts.map((inp, idx) => updateCellFromInput(w.antonyms[idx], inp.value));
+            } else {
+                newAnts = updateCellFromInput(w.antonyms, inputAnts[0].value);
+            }
+            
+            // Build updated object
+            const updatedObj = {
+                ...w,
+                word: newWord,
+                pronunciation: newPron,
+                meaning: newMeaning,
+                memorySentence: newMem,
+                synonyms: newSyns,
+                antonyms: newAnts,
+                wordText: (newWord.type === 'text' && newWord.data ? newWord.data.trim() : w.wordText)
+            };
+            
+            saveWords([updatedObj], () => {
+                // Reload lists
+                getWords(() => {
+                    loadAlphabeticalList();
+                    loadArchiveList();
+                });
+            });
+        };
+        
+        const btnCancel = document.createElement('button');
+        btnCancel.className = 'btn-cancel-edit';
+        btnCancel.innerHTML = '❌ İptal';
+        btnCancel.onclick = (e) => {
+            e.stopPropagation();
+            // Reset fields
+            inputWord.value = getCellText(w.word);
+            inputPron.value = getCellText(w.pronunciation);
+            inputMeaning.value = getCellText(w.meaning);
+            textareaMem.value = getCellText(w.memorySentence);
+            if (Array.isArray(w.synonyms)) {
+                inputSyns.forEach((inp, idx) => inp.value = getCellText(w.synonyms[idx]));
+            } else {
+                inputSyns[0].value = getCellText(w.synonyms);
+            }
+            if (Array.isArray(w.antonyms)) {
+                inputAnts.forEach((inp, idx) => inp.value = getCellText(w.antonyms[idx]));
+            } else {
+                inputAnts[0].value = getCellText(w.antonyms);
+            }
+            
+            // Toggle view
+            editModeDiv.classList.add('hidden');
+            viewModeDiv.classList.remove('hidden');
+        };
+        
+        editActionsRow.appendChild(btnSave);
+        editActionsRow.appendChild(btnCancel);
+        editModeDiv.appendChild(editActionsRow);
+        
+        detailsDiv.appendChild(viewModeDiv);
+        detailsDiv.appendChild(editModeDiv);
         
         card.appendChild(detailsDiv);
         
-        // Toggle expansion on card click
+        // Toggle expansion on card click (excluding inputs/actions)
         card.onclick = (e) => {
-            if (e.target.closest('.btn-delete-word')) return;
+            if (e.target.closest('.btn-delete-word') || 
+                e.target.closest('.card-edit-mode') || 
+                e.target.closest('.card-actions-row') || 
+                e.target.closest('input') || 
+                e.target.closest('textarea') || 
+                e.target.closest('button')) {
+                return;
+            }
             
             const isCollapsed = card.classList.contains('collapsed');
             if (isCollapsed) {

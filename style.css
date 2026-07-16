@@ -1960,3 +1960,233 @@ input:checked + .slider:before {
     border-color: var(--primary-color);
     transform: scale(1.08);
 }
+
+/* Settings Highlight Picker Grid styling */
+.highlight-picker-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.highlight-color-bubble {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.highlight-color-bubble:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+
+.highlight-color-bubble.active {
+    border-color: #ffffff;
+    outline: 2px solid var(--primary-color);
+    transform: scale(1.1);
+}
+
+/* Compact floating text highlight action tooltip */
+.highlight-tooltip {
+    position: absolute;
+    display: flex;
+    gap: 6px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 4px 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    animation: tooltipFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.highlight-tooltip button {
+    background: none;
+    border: none;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    font-family: inherit;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 12px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.highlight-tooltip .btn-highlight-paint {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.highlight-tooltip .btn-highlight-paint:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.highlight-tooltip .btn-highlight-clear {
+    background-color: rgba(255, 59, 48, 0.1);
+    color: var(--danger-color);
+}
+
+.highlight-tooltip .btn-highlight-clear:hover {
+    background-color: var(--danger-color);
+    color: #ffffff;
+}
+
+/* Card Edit Form styles */
+.card-edit-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 10px 0;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 12px;
+}
+
+.edit-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.edit-field-label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-edit-input {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: var(--transition);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card-edit-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    background-color: var(--card-bg);
+}
+
+.card-edit-textarea {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: var(--transition);
+    min-height: 80px;
+    resize: vertical;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card-edit-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    background-color: var(--card-bg);
+}
+
+.edit-subfields-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.card-actions-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+}
+
+.btn-save-edit {
+    background-color: var(--success-color);
+    border: none;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-save-edit:hover {
+    background-color: #28a745;
+    transform: translateY(-1px);
+}
+
+.btn-cancel-edit {
+    background-color: rgba(0, 0, 0, 0.08);
+    border: none;
+    color: var(--text-color);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-cancel-edit:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.card-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    border-top: 1px dashed var(--border-color);
+    padding-top: 8px;
+}
+
+.btn-edit-word {
+    background-color: var(--primary-light);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-edit-word:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
