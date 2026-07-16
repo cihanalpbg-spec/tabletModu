@@ -31,7 +31,7 @@
             </div>
             <nav class="sidebar-menu">
                 <button onclick="switchScreen('screen-dashboard')" class="menu-item active" id="menu-dash">
-                    <span class="icon">📋</span> 20'li Tablo Girişi
+                    <span class="icon">📝</span> Kelime Giriş Tahtası
                 </button>
                 <button onclick="switchScreen('screen-word-lists')" class="menu-item" id="menu-lists">
                     <span class="icon">🔤</span> Alfabetik Kelime Listesi
@@ -49,6 +49,18 @@
                     <span class="icon">⚙️</span> Arayüz Ayarları
                 </button>
             </nav>
+            
+            <!-- VIRTUAL KEYBOARD DRAWER (PINNED TO SIDEBAR) -->
+            <div id="virtual-keyboard-drawer" class="keyboard-drawer-sidebar hidden">
+                <div class="keyboard-header">
+                    <span id="keyboard-lang-label">Sanal Klavye (İngilizce)</span>
+                    <button class="btn-close-keyboard" onclick="toggleVirtualKeyboard(false)">✖</button>
+                </div>
+                <div class="keyboard-keys" id="keyboard-keys-container">
+                    <!-- Keys will be injected here -->
+                </div>
+            </div>
+
             <div class="sidebar-footer">
                 <button class="btn-change-lang" onclick="goHome()">🏠 Dil Değiştir</button>
             </div>
@@ -102,10 +114,43 @@
                 </div>
                 <div class="header-right">
                     <div class="date-badge">Tarih: <span id="current-date-str">16.08.2026</span></div>
-                    <label class="btn-primary" style="margin-right: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" title="6 Sütunlu Word Tablosu Yükle">
-                        📥 Word Yükle
-                        <input type="file" id="word-file-upload" accept=".docx" style="display: none;" onchange="handleWordDocxUpload(event)">
-                    </label>
+                    
+                    <!-- Word Upload Wrapper with Guide Tooltip -->
+                    <div class="word-upload-wrapper">
+                        <label class="btn-primary" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0;" title="6 Sütunlu Word Tablosu Yükle">
+                            📥 Word Yükle
+                            <input type="file" id="word-file-upload" accept=".docx" style="display: none;" onchange="handleWordDocxUpload(event)">
+                        </label>
+                        <div class="word-info-btn">ℹ️</div>
+                        <div class="word-template-tooltip">
+                            <h4>Word Tablo Şablonu Yükleme Rehberi</h4>
+                            <p>Yükleyeceğiniz Word (.docx) dosyasındaki tablo <strong>en az 6 sütunlu</strong> olmalıdır:</p>
+                            <table class="tooltip-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sütun 1</th>
+                                        <th>Sütun 2</th>
+                                        <th>Sütun 3</th>
+                                        <th>Sütun 4</th>
+                                        <th>Sütun 5</th>
+                                        <th>Sütun 6</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>KELİME (Word)</td>
+                                        <td>Türkçe Okunuşu</td>
+                                        <td>TÜRKÇE ANLAMI</td>
+                                        <td>HAFIZA CÜMLESİ</td>
+                                        <td>Eş Anlamlıları</td>
+                                        <td>Zıt Anlamlıları</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <small>* Belgedeki tablonun ilk satırı başlık olarak okunur ve içeri aktarılmaz.</small>
+                        </div>
+                    </div>
+                    
                     <button class="btn-clear" onclick="clearChalkboard()">🗑️ Temizle</button>
                     <button class="btn-save" onclick="saveChalkboardWord()">💾 Kaydet</button>
                 </div>
@@ -117,7 +162,7 @@
                     <!-- Board Title / Header -->
                     <div class="board-header">
                         <h2>Kelime Kayıt Alanı</h2>
-                        <span class="board-subtitle">Tablet kalemi veya klavye ile yazıp çizebilirsiniz</span>
+                        <span class="board-subtitle">İster klavye ile yazın, ister kalem ile doğrudan çizin</span>
                     </div>
                     
                     <!-- Main Board Body Layout -->
@@ -128,12 +173,7 @@
                                 <label class="board-label">KELİME (Word)</label>
                                 <div class="cell-container" id="container-board-word">
                                     <div class="text-input" contenteditable="true" id="board-word" placeholder="Kelimeyi girin veya çizin..."></div>
-                                    <canvas class="canvas-overlay hidden" id="canvas-board-word"></canvas>
-                                    <div class="cell-controls">
-                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-word', 'kbd')" title="Klavye Girişi">⌨️</button>
-                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-word', 'pen')" title="Kalem Çizimi">✏️</button>
-                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-word')" title="Çizimi Temizle">🧹</button>
-                                    </div>
+                                    <canvas class="canvas-overlay" id="canvas-board-word"></canvas>
                                 </div>
                             </div>
                             
@@ -141,12 +181,7 @@
                                 <label class="board-label">TÜRKÇE OKUNUŞU</label>
                                 <div class="cell-container" id="container-board-pronunciation">
                                     <div class="text-input" contenteditable="true" id="board-pronunciation" placeholder="Okunuşunu girin veya çizin..."></div>
-                                    <canvas class="canvas-overlay hidden" id="canvas-board-pronunciation"></canvas>
-                                    <div class="cell-controls">
-                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-pronunciation', 'kbd')" title="Klavye Girişi">⌨️</button>
-                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-pronunciation', 'pen')" title="Kalem Çizimi">✏️</button>
-                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-pronunciation')" title="Çizimi Temizle">🧹</button>
-                                    </div>
+                                    <canvas class="canvas-overlay" id="canvas-board-pronunciation"></canvas>
                                 </div>
                             </div>
                             
@@ -154,12 +189,7 @@
                                 <label class="board-label">TÜRKÇE ANLAMI (Meaning)</label>
                                 <div class="cell-container" id="container-board-meaning">
                                     <div class="text-input" contenteditable="true" id="board-meaning" placeholder="Anlamını girin veya çizin..."></div>
-                                    <canvas class="canvas-overlay hidden" id="canvas-board-meaning"></canvas>
-                                    <div class="cell-controls">
-                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-meaning', 'kbd')" title="Klavye Girişi">⌨️</button>
-                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-meaning', 'pen')" title="Kalem Çizimi">✏️</button>
-                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-meaning')" title="Çizimi Temizle">🧹</button>
-                                    </div>
+                                    <canvas class="canvas-overlay" id="canvas-board-meaning"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -170,12 +200,7 @@
                                 <label class="board-label">HAFIZA CÜMLESİ (Memory Association Sentence)</label>
                                 <div class="cell-container" id="container-board-memorySentence">
                                     <div class="text-input" contenteditable="true" id="board-memorySentence" placeholder="Hafıza cümlesini yazın veya çizin..."></div>
-                                    <canvas class="canvas-overlay hidden" id="canvas-board-memorySentence"></canvas>
-                                    <div class="cell-controls">
-                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-memorySentence', 'kbd')" title="Klavye Girişi">⌨️</button>
-                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-memorySentence', 'pen')" title="Kalem Çizimi">✏️</button>
-                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-memorySentence')" title="Çizimi Temizle">🧹</button>
-                                    </div>
+                                    <canvas class="canvas-overlay" id="canvas-board-memorySentence"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -190,36 +215,21 @@
                                         <span class="sub-num">1</span>
                                         <div class="cell-container" id="container-board-antonym-1">
                                             <div class="text-input" contenteditable="true" id="board-antonym-1" placeholder="Zıt anlam 1..."></div>
-                                            <canvas class="canvas-overlay hidden" id="canvas-board-antonym-1"></canvas>
-                                            <div class="cell-controls">
-                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-antonym-1', 'kbd')" title="Klavye">⌨️</button>
-                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-antonym-1', 'pen')" title="Kalem">✏️</button>
-                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-antonym-1')" title="Temizle">🧹</button>
-                                            </div>
+                                            <canvas class="canvas-overlay" id="canvas-board-antonym-1"></canvas>
                                         </div>
                                     </div>
                                     <div class="board-subfield">
                                         <span class="sub-num">2</span>
                                         <div class="cell-container" id="container-board-antonym-2">
                                             <div class="text-input" contenteditable="true" id="board-antonym-2" placeholder="Zıt anlam 2..."></div>
-                                            <canvas class="canvas-overlay hidden" id="canvas-board-antonym-2"></canvas>
-                                            <div class="cell-controls">
-                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-antonym-2', 'kbd')" title="Klavye">⌨️</button>
-                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-antonym-2', 'pen')" title="Kalem">✏️</button>
-                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-antonym-2')" title="Temizle">🧹</button>
-                                            </div>
+                                            <canvas class="canvas-overlay" id="canvas-board-antonym-2"></canvas>
                                         </div>
                                     </div>
                                     <div class="board-subfield">
                                         <span class="sub-num">3</span>
                                         <div class="cell-container" id="container-board-antonym-3">
                                             <div class="text-input" contenteditable="true" id="board-antonym-3" placeholder="Zıt anlam 3..."></div>
-                                            <canvas class="canvas-overlay hidden" id="canvas-board-antonym-3"></canvas>
-                                            <div class="cell-controls">
-                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-antonym-3', 'kbd')" title="Klavye">⌨️</button>
-                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-antonym-3', 'pen')" title="Kalem">✏️</button>
-                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-antonym-3')" title="Temizle">🧹</button>
-                                            </div>
+                                            <canvas class="canvas-overlay" id="canvas-board-antonym-3"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -233,36 +243,21 @@
                                         <span class="sub-num">1</span>
                                         <div class="cell-container" id="container-board-synonym-1">
                                             <div class="text-input" contenteditable="true" id="board-synonym-1" placeholder="Eş anlam 1..."></div>
-                                            <canvas class="canvas-overlay hidden" id="canvas-board-synonym-1"></canvas>
-                                            <div class="cell-controls">
-                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-synonym-1', 'kbd')" title="Klavye">⌨️</button>
-                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-synonym-1', 'pen')" title="Kalem">✏️</button>
-                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-synonym-1')" title="Temizle">🧹</button>
-                                            </div>
+                                            <canvas class="canvas-overlay" id="canvas-board-synonym-1"></canvas>
                                         </div>
                                     </div>
                                     <div class="board-subfield">
                                         <span class="sub-num">2</span>
                                         <div class="cell-container" id="container-board-synonym-2">
                                             <div class="text-input" contenteditable="true" id="board-synonym-2" placeholder="Eş anlam 2..."></div>
-                                            <canvas class="canvas-overlay hidden" id="canvas-board-synonym-2"></canvas>
-                                            <div class="cell-controls">
-                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-synonym-2', 'kbd')" title="Klavye">⌨️</button>
-                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-synonym-2', 'pen')" title="Kalem">✏️</button>
-                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-synonym-2')" title="Temizle">🧹</button>
-                                            </div>
+                                            <canvas class="canvas-overlay" id="canvas-board-synonym-2"></canvas>
                                         </div>
                                     </div>
                                     <div class="board-subfield">
                                         <span class="sub-num">3</span>
                                         <div class="cell-container" id="container-board-synonym-3">
                                             <div class="text-input" contenteditable="true" id="board-synonym-3" placeholder="Eş anlam 3..."></div>
-                                            <canvas class="canvas-overlay hidden" id="canvas-board-synonym-3"></canvas>
-                                            <div class="cell-controls">
-                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-synonym-3', 'kbd')" title="Klavye">⌨️</button>
-                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-synonym-3', 'pen')" title="Kalem">✏️</button>
-                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-synonym-3')" title="Temizle">🧹</button>
-                                            </div>
+                                            <canvas class="canvas-overlay" id="canvas-board-synonym-3"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -529,16 +524,7 @@
             <button class="btn-close-picker" onclick="hideColorPicker()">×</button>
         </div>
 
-        <!-- VIRTUAL KEYBOARD DRAWER -->
-        <div id="virtual-keyboard-drawer" class="keyboard-drawer hidden">
-            <div class="keyboard-header">
-                <span id="keyboard-lang-label">Sanal Klavye (İngilizce)</span>
-                <button class="btn-close-keyboard" onclick="toggleVirtualKeyboard(false)">Klavye Kapat ✖</button>
-            </div>
-            <div class="keyboard-keys" id="keyboard-keys-container">
-                <!-- Keys will be injected here depending on the active language -->
-            </div>
-        </div>
+
 
     </div>
 

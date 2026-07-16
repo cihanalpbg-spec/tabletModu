@@ -17,16 +17,30 @@
     --transition: all 0.3s ease;
 }
 
-/* THEMES */
+/* THEMES (WITH AUTOMATIC BACKGROUND AND CARD PANEL TINTING) */
+body.theme-blue {
+    --primary-color: #007aff;
+    --primary-light: rgba(0, 122, 255, 0.15);
+    --primary-dark: #0056b3;
+    --bg-color: #f1f5fa; /* Soft light-blue background tint */
+    --card-bg: #f8fafc; /* Card panel tint */
+    --border-color: #dbe2e9;
+}
 body.theme-purple {
     --primary-color: #af52de;
     --primary-light: rgba(175, 82, 222, 0.15);
     --primary-dark: #7a22a6;
+    --bg-color: #f6f1fc; /* Soft purple background tint */
+    --card-bg: #faf7fd; /* Card panel tint */
+    --border-color: #e8dff4;
 }
 body.theme-teal {
     --primary-color: #00a896;
     --primary-light: rgba(0, 168, 150, 0.15);
     --primary-dark: #028090;
+    --bg-color: #f0f7f6; /* Soft teal background tint */
+    --card-bg: #f7fbfc; /* Card panel tint */
+    --border-color: #d6eae7;
 }
 body.theme-sepia {
     --primary-color: #8c6239;
@@ -34,11 +48,15 @@ body.theme-sepia {
     --primary-dark: #5c3a21;
     --bg-color: #f7f1e3;
     --card-bg: #fcf8f2;
+    --border-color: #e5dcc6;
 }
 body.theme-orange {
     --primary-color: #ff9500;
     --primary-light: rgba(255, 149, 0, 0.15);
     --primary-dark: #cc7a00;
+    --bg-color: #fff9f0; /* Soft orange background tint */
+    --card-bg: #fffdfa; /* Card panel tint */
+    --border-color: #fceadc;
 }
 
 /* CHALKBOARD MODE */
@@ -1749,4 +1767,196 @@ input:checked + .slider:before {
         padding: 10px 18px;
         font-size: 0.95rem;
     }
+}
+
+/* Custom SVG Chalk Cursor for canvases when in pen mode */
+.canvas-overlay {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M2 30 L6 26 L26 6 L30 10 L10 30 Z" fill="%23ffffff" stroke="%23888888" stroke-width="1.5"/><rect x="2" y="26" width="4" height="4" fill="%23e0e0e0" transform="rotate(45)"/><path d="M26 6 L30 2 L30 6 Z" fill="%23ffffff" opacity="0.4"/></svg>') 0 32, crosshair;
+}
+
+/* Dashboard scrollable and wooden ruler scrollbar */
+#screen-dashboard {
+    overflow-y: auto !important;
+}
+
+#screen-dashboard::-webkit-scrollbar {
+    width: 14px;
+}
+
+#screen-dashboard::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    border-left: 1px solid var(--border-color);
+}
+
+#screen-dashboard::-webkit-scrollbar-thumb {
+    background-color: #8c6239; /* Elegant wood brown slider */
+    border: 3px solid var(--card-bg);
+    border-radius: 8px;
+    background-image: linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 4px 100%; /* Vertical ruler lines */
+}
+
+#screen-dashboard::-webkit-scrollbar-thumb:hover {
+    background-color: #5c3a21; /* Dark wood brown */
+}
+
+/* Word Upload Template Tooltip Guide */
+.word-upload-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.word-info-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid var(--primary-color);
+    transition: var(--transition);
+}
+
+.word-info-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.word-template-tooltip {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    width: 480px;
+    background-color: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    z-index: 500;
+    display: none;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-color);
+}
+
+.word-upload-wrapper:hover .word-template-tooltip {
+    display: block;
+}
+
+.word-template-tooltip h4 {
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    font-size: 1.05rem;
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.word-template-tooltip p {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.tooltip-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    font-size: 0.75rem;
+}
+
+.tooltip-table th, .tooltip-table td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: center;
+}
+
+.tooltip-table th {
+    background-color: var(--primary-light);
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.word-template-tooltip small {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+/* Sidebar Pinned Virtual Keyboard */
+.keyboard-drawer-sidebar {
+    padding: 12px 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-top: 1px dashed var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.keyboard-drawer-sidebar.hidden {
+    display: none;
+}
+
+.keyboard-drawer-sidebar .keyboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.keyboard-drawer-sidebar #keyboard-lang-label {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+.keyboard-drawer-sidebar .btn-close-keyboard {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--danger-color);
+}
+
+.keyboard-drawer-sidebar .keyboard-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.keyboard-drawer-sidebar .kb-key {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 4px;
+    padding: 5px 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    min-width: 22px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+.keyboard-drawer-sidebar .kb-key:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    transform: scale(1.08);
 }

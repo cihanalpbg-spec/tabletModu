@@ -275,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Render Workspace (default)
     initChalkboardKeyboardBindings();
+    initChalkboardCanvases();
     
     // Initialize Float Selection Color Listener
     initSelectionColorListener();
@@ -602,7 +603,9 @@ function clearCanvasCell(cellId) {
     delete drawingStates[cellId];
 }
 
-// CANVAS DRAWING ENGINE (TABLET PEN SUPPORT)
+// CANVAS DRAWING ENGINE (TABLET PEN SUPPORT WITH INTEGRATED DRAG/TAP DETECTION)
+let canvasStartPositions = {};
+
 function setupCanvas(canvas, cellId) {
     // Set width and height explicitly based on bounds
     const rect = canvas.getBoundingClientRect();
@@ -614,18 +617,64 @@ function setupCanvas(canvas, cellId) {
     ctx.lineCap = 'round';
     ctx.lineWidth = 3;
     
-    // Adjust colors depending on chalkboard mode
+    // Adjust brush style depending on chalkboard mode
     if (chalkboardMode) {
-        ctx.strokeStyle = '#ffffff'; // White chalk
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; // Textured white chalk
+        ctx.shadowBlur = 1;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
     } else {
-        ctx.strokeStyle = '#2c3e50'; // Ink pen
+        ctx.strokeStyle = '#2c3e50'; // Dark ink pen
+        ctx.shadowBlur = 0;
     }
     
-    // Bind touch / mouse events
-    canvas.addEventListener('pointerdown', (e) => startDrawing(e, canvas, ctx));
-    canvas.addEventListener('pointermove', (e) => draw(e, canvas, ctx, cellId));
-    canvas.addEventListener('pointerup', () => stopDrawing(canvas, cellId));
-    canvas.addEventListener('pointerout', () => stopDrawing(canvas, cellId));
+    // Bind touch / mouse events with drag-detection
+    canvas.addEventListener('pointerdown', (e) => {
+        canvasStartPositions[cellId] = { x: e.clientX, y: e.clientY, isDrag: false };
+        startDrawing(e, canvas, ctx);
+    });
+    
+    canvas.addEventListener('pointermove', (e) => {
+        if (isDrawing && canvasStartPositions[cellId]) {
+            const start = canvasStartPositions[cellId];
+            const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+            if (dist > 6) {
+                start.isDrag = true;
+            }
+            draw(e, canvas, ctx, cellId);
+        }
+    });
+    
+    canvas.addEventListener('pointerup', (e) => {
+        const start = canvasStartPositions[cellId];
+        stopDrawing(canvas, cellId);
+        
+        if (start && !start.isDrag) {
+            // Tap/Click: Focus the text-input underneath and place cursor at the end
+            const textInput = document.getElementById(cellId);
+            if (textInput) {
+                textInput.focus();
+                
+                // Position caret at end of text input content
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(textInput);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+        delete canvasStartPositions[cellId];
+    });
+    
+    canvas.addEventListener('pointerout', () => {
+        stopDrawing(canvas, cellId);
+        delete canvasStartPositions[cellId];
+    });
+    
+    // Clear canvas drawing on double click/tap
+    canvas.addEventListener('dblclick', () => {
+        clearCanvasCell(cellId);
+    });
 }
 
 function startDrawing(e, canvas, ctx) {
@@ -669,7 +718,7 @@ function stopDrawing(canvas, cellId) {
     const dataUrl = canvas.toDataURL();
     drawingStates[cellId] = dataUrl;
     
-    // Mirror drawing to the other canvas (desktop <=> mobile)
+    // Mirror drawing to the other canvas if it exists (desktop <=> mobile)
     const prefix = canvas.id.startsWith('mob-') ? '' : 'mob-';
     const oppositeCanvasId = prefix + 'canvas-' + cellId;
     const oppositeCanvas = document.getElementById(oppositeCanvasId);
@@ -894,6 +943,28 @@ function initChalkboardKeyboardBindings() {
                 activeFocusedInput = inputEl;
                 openVirtualKeyboardForLang();
             });
+            
+            // Clear drawing when Backspace is pressed and text field is already empty
+            inputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && inputEl.innerText.trim() === '') {
+                    clearCanvasCell(fieldId);
+                }
+            });
+        }
+    });
+}
+
+function initChalkboardCanvases() {
+    const fields = [
+        'board-word', 'board-pronunciation', 'board-meaning', 'board-memorySentence',
+        'board-synonym-1', 'board-synonym-2', 'board-synonym-3',
+        'board-antonym-1', 'board-antonym-2', 'board-antonym-3'
+    ];
+    
+    fields.forEach(fieldId => {
+        const canvas = document.getElementById(`canvas-${fieldId}`);
+        if (canvas) {
+            setupCanvas(canvas, fieldId);
         }
     });
 }
@@ -931,14 +1002,10 @@ function initSelectionColorListener() {
             // Wait slightly before hiding to allow color click event to trigger
             setTimeout(() => {
                 const sel = window.getSelection().toString().trim();
-                if (sel.length === 0) hideColorPicker();
-            }, 100);
-        }
-    });
-}
-
-function hideColorPicker() {
+                if (sel.lfunction hideColorPicker() {
     document.getElementById('floating-color-picker').classList.add('hidden');
+    window.getSelection().removeAllRanges(); // Clear selection range to prevent selectionchange re-triggering
+    selectedRange = null;
 }
 
 function applyColor(color) {
@@ -971,49 +1038,49 @@ function applyColor(color) {
     selectedRange = null;
 }
 
-// VIRTUAL KEYBOARDS FOR MULTIPLE LANGUAGES
+// VIRTUAL KEYBOARDS FOR MULTIPLE LANGUAGES (WITH ADDED DELETE KEY)
 const KEYBOARD_LAYOUTS = {
     english: [
         'q','w','e','r','t','y','u','i','o','p',
         'a','s','d','f','g','h','j','k','l',
-        'z','x','c','v','b','n','m','Space','Backspace'
+        'z','x','c','v','b','n','m','Space','Backspace','Delete'
     ],
     german: [
         'q','w','e','r','t','z','u','i','o','p','ü',
         'a','s','d','f','g','h','j','k','l','ä','ö',
         'y','x','c','v','b','n','m','ß',
-        'Space','Backspace'
+        'Space','Backspace','Delete'
     ],
     french: [
         'a','z','e','r','t','y','u','i','o','p',
         'q','s','d','f','g','h','j','k','l','m',
         'w','x','c','v','b','n','é','è','à','ç','ù',
         'â','ê','î','ô','û','ë','ï','ü','œ','æ',
-        'Space','Backspace'
+        'Space','Backspace','Delete'
     ],
     italian: [
         'q','w','e','r','t','y','u','i','o','p',
         'a','s','d','f','g','h','j','k','l',
         'z','x','c','v','b','n','m','à','è','é','ì','ò','ù',
-        'Space','Backspace'
+        'Space','Backspace','Delete'
     ],
     japanese: [
         // Hiragana basics
         'あ','い','う','え','お',  'か','き','く','け','こ',
         'さ','し','す','せ','そ',  'た','ち','つ','て','と',
-        'な','に','ぬ','ね','の',  'は','ひ','ふ','へ','ほ',
+        'な','ni','ぬ','ね','の',  'は','ひ','ふ','へ','ほ',
         'ま','み','む','め','も',  'や','ゆ','よ',
         'ら','り','る','れ','ろ',  'わ','を','ん',
         // Common Katakana basics
         'ア','イ','ウ','エ','オ',  'カ','キ','ク','ケ','コ',
-        'サ','シ','ス','セ','ソ',  'タ','チ','ツ','テ','ト',
-        'Space','Backspace'
+        'サ','シ','ス','セ','ソ',  'タ','チ','ツ','て','ト',
+        'Space','Backspace','Delete'
     ],
     hebrew: [
         'ק','ר','א','ט','ו','ן','ם','פ',
         'ש','ד','ג','כ','ע','י','ח','ל','ך','ף',
         'ז','ס','ב','ה','נ','מ','צ','ת','ץ','ך',
-        'Space','Backspace'
+        'Space','Backspace','Delete'
     ]
 };
 
@@ -1036,6 +1103,10 @@ function openVirtualKeyboardForLang() {
             btn.textContent = '⌫ Geri';
             btn.style.backgroundColor = '#ff3b30';
             btn.style.color = '#ffffff';
+        } else if (key === 'Delete') {
+            btn.textContent = '⌦ Sil';
+            btn.style.backgroundColor = '#ff9500';
+            btn.style.color = '#ffffff';
         } else {
             btn.textContent = key;
         }
@@ -1057,26 +1128,49 @@ function toggleVirtualKeyboard(show) {
         kbd.classList.remove('hidden');
     } else {
         kbd.classList.add('hidden');
+        if (activeFocusedInput) {
+            activeFocusedInput.blur(); // Blur active input to prevent refocus triggers
+            activeFocusedInput = null;
+        }
     }
 }
 
 function handleVirtualKeyPress(key) {
     if (!activeFocusedInput) return;
-    
-    // Insert text at cursor or at end
     activeFocusedInput.focus();
     
+    const selection = window.getSelection();
+    
     if (key === 'Backspace') {
-        const text = activeFocusedInput.innerHTML;
-        // Basic backspace logic for HTML contents
-        if (text.endsWith(';')) {
-            // Might be HTML entity
-            activeFocusedInput.innerHTML = text.substring(0, text.lastIndexOf('&'));
-        } else if (text.endsWith('>')) {
-            // Might be tag closing, remove whole tag
-            activeFocusedInput.innerHTML = text.substring(0, text.lastIndexOf('<'));
+        if (selection.rangeCount > 0 && !selection.isCollapsed) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
         } else {
-            activeFocusedInput.innerHTML = text.substring(0, text.length - 1);
+            // Delete one character at cursor
+            const range = selection.getRangeAt(0);
+            if (range.startContainer.nodeType === Node.TEXT_NODE && range.startOffset > 0) {
+                range.setStart(range.startContainer, range.startOffset - 1);
+                range.deleteContents();
+            } else {
+                // Fallback character deletion
+                const text = activeFocusedInput.innerHTML;
+                if (text.endsWith(';')) {
+                    activeFocusedInput.innerHTML = text.substring(0, text.lastIndexOf('&'));
+                } else if (text.endsWith('>')) {
+                    activeFocusedInput.innerHTML = text.substring(0, text.lastIndexOf('<'));
+                } else {
+                    activeFocusedInput.innerHTML = text.substring(0, text.length - 1);
+                }
+            }
+        }
+    } else if (key === 'Delete') {
+        if (selection.rangeCount > 0 && !selection.isCollapsed) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+        } else {
+            // Delete key clears the entire field text and erases pen drawing
+            activeFocusedInput.innerHTML = '';
+            clearCanvasCell(activeFocusedInput.id);
         }
     } else if (key === 'Space') {
         document.execCommand('insertText', false, ' ');
@@ -1084,7 +1178,7 @@ function handleVirtualKeyPress(key) {
         document.execCommand('insertText', false, key);
     }
     
-    // Sync contents to mirror clones
+    // Sync clones
     const isMob = activeFocusedInput.id.startsWith('mob-');
     const counterpartId = isMob ? activeFocusedInput.id.substring(4) : `mob-${activeFocusedInput.id}`;
     const counterpart = document.getElementById(counterpartId);
