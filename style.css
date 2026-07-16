@@ -1459,3 +1459,294 @@ input:checked + .slider:before {
         grid-template-columns: 1fr;
     }
 }
+
+/* SINGLE-WORD CHALKBOARD BOARD STYLES */
+.board-workspace-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.chalkboard-card {
+    width: 100%;
+    background-color: #1a3020; /* Deep chalkboard green */
+    background-image: radial-gradient(circle, #223c28 0%, #122216 100%);
+    border: 16px solid #4a2f1b; /* Realistic wooden frame */
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.8);
+    padding: 25px;
+    box-sizing: border-box;
+    position: relative;
+    font-family: 'Playpen Sans', 'Comic Sans MS', cursive;
+    color: #f0f5f1;
+}
+
+/* Wood frame inner shadow overlay */
+.chalkboard-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 2px solid rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+    border-radius: 2px;
+}
+
+.board-header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+    padding-bottom: 12px;
+}
+
+.board-header h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 2px 2px 2px rgba(0, 0, 0, 0.4);
+    letter-spacing: 1px;
+}
+
+.board-subtitle {
+    font-size: 0.95rem;
+    color: #a4beac;
+    display: block;
+    margin-top: 4px;
+}
+
+.board-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.board-row {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.top-row {
+    flex-wrap: wrap;
+}
+
+.top-row .board-field {
+    flex: 1;
+    min-width: 250px;
+}
+
+.board-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.board-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffd043; /* Yellow chalk accent */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+/* Make cell containers inside the chalkboard card stand out as chalk-drawn slots */
+.chalkboard-card .cell-container {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    min-height: 70px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.chalkboard-card .cell-container:focus-within {
+    border-color: #ffd043; /* Yellow focus border */
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.chalkboard-card .text-input {
+    min-height: 60px;
+    font-size: 1.15rem;
+    padding: 10px 12px;
+    color: #ffffff;
+    line-height: 1.4;
+}
+
+.chalkboard-card .text-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* Bottom Split Row */
+.bottom-row {
+    flex-wrap: wrap;
+}
+
+.board-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.column-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #87e0a2; /* Pale green chalk accent */
+    margin-bottom: 12px;
+    border-bottom: 1px dashed rgba(135, 224, 162, 0.25);
+    padding-bottom: 6px;
+    text-align: center;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.subfields-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.board-subfield {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.sub-num {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.4);
+    min-width: 15px;
+    text-align: center;
+}
+
+.board-subfield .cell-container {
+    flex: 1;
+}
+
+/* Action buttons at bottom */
+.board-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+    padding-top: 20px;
+}
+
+.btn-clear-board {
+    background-color: rgba(255, 59, 48, 0.15);
+    border: 2px solid rgba(255, 59, 48, 0.4);
+    color: #ff8b85;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-clear-board:hover {
+    background-color: rgba(255, 59, 48, 0.3);
+    color: #ffffff;
+    border-color: #ff3b30;
+}
+
+.btn-save-board {
+    background-color: #34c759;
+    border: 2px solid #34c759;
+    color: #ffffff;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 10px rgba(52, 199, 89, 0.3);
+}
+
+.btn-save-board:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(52, 199, 89, 0.4);
+}
+
+.btn-save-board:active {
+    transform: translateY(0);
+}
+
+/* COLLAPSIBLE / EXPANDABLE WORD CARD STYLES */
+.word-display-card {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+    padding: 14px 18px !important;
+}
+
+.word-display-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Expand chevron transition */
+.expand-chevron {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    transition: transform 0.3s ease;
+    user-select: none;
+    margin-right: 4px;
+}
+
+.word-display-card.expanded .expand-chevron {
+    transform: rotate(180deg);
+    color: var(--primary-color);
+}
+
+/* Collapsed/Expanded Details visibility */
+.word-display-card.collapsed .card-details-container {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+    transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), opacity 0.2s ease, margin-top 0.3s;
+}
+
+.word-display-card.expanded .card-details-container {
+    max-height: 1000px;
+    opacity: 1;
+    margin-top: 14px;
+    transition: max-height 0.5s cubic-bezier(1, 0, 1, 0), opacity 0.3s ease 0.1s, margin-top 0.3s;
+}
+
+/* Fields inside card details */
+.card-details-container {
+    border-top: 1px dashed var(--border-color);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Responsive adjustment for Chalkboard */
+@media (max-width: 768px) {
+    .chalkboard-card {
+        border-width: 10px;
+        padding: 15px;
+    }
+    
+    .board-header h2 {
+        font-size: 1.6rem;
+    }
+    
+    .btn-clear-board, .btn-save-board {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+    }
+}

@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Render Workspace (default)
-    generateWorkspaceRows();
+    initChalkboardKeyboardBindings();
     
     // Initialize Float Selection Color Listener
     initSelectionColorListener();
@@ -533,56 +533,56 @@ function generateWorkspaceRows() {
 // TOGGLE CELL INPUT MODE (PEN VS KEYBOARD)
 function toggleCellInputMode(cellId, mode) {
     const parentContainer = document.getElementById(`container-${cellId}`);
-    const mobParentContainer = document.getElementById(`mob-container-${cellId}`);
-    
+    if (!parentContainer) return;
     const textInput = document.getElementById(cellId);
-    const mobTextInput = document.getElementById(`mob-${cellId}`);
-    
     const canvas = document.getElementById(`canvas-${cellId}`);
-    const mobCanvas = document.getElementById(`mob-canvas-${cellId}`);
     
     const btnKbd = parentContainer.querySelector('.btn-kbd');
     const btnPen = parentContainer.querySelector('.btn-pen');
     const btnCls = parentContainer.querySelector('.btn-cls');
     
-    const mobBtnKbd = mobParentContainer.querySelector('.btn-kbd');
-    const mobBtnPen = mobParentContainer.querySelector('.btn-pen');
-    const mobBtnCls = mobParentContainer.querySelector('.btn-cls');
+    const mobParentContainer = document.getElementById(`mob-container-${cellId}`);
+    const mobTextInput = document.getElementById(`mob-${cellId}`);
+    const mobCanvas = document.getElementById(`mob-canvas-${cellId}`);
+    
+    const mobBtnKbd = mobParentContainer ? mobParentContainer.querySelector('.btn-kbd') : null;
+    const mobBtnPen = mobParentContainer ? mobParentContainer.querySelector('.btn-pen') : null;
+    const mobBtnCls = mobParentContainer ? mobParentContainer.querySelector('.btn-cls') : null;
     
     if (mode === 'pen') {
-        textInput.classList.add('hidden');
-        mobTextInput.classList.add('hidden');
-        canvas.classList.remove('hidden');
-        mobCanvas.classList.remove('hidden');
+        if (textInput) textInput.classList.add('hidden');
+        if (mobTextInput) mobTextInput.classList.add('hidden');
+        if (canvas) canvas.classList.remove('hidden');
+        if (mobCanvas) mobCanvas.classList.remove('hidden');
         
-        btnKbd.classList.remove('active');
-        mobBtnKbd.classList.remove('active');
-        btnPen.classList.add('active');
-        mobBtnPen.classList.add('active');
-        btnCls.classList.remove('hidden');
-        mobBtnCls.classList.remove('hidden');
+        if (btnKbd) btnKbd.classList.remove('active');
+        if (mobBtnKbd) mobBtnKbd.classList.remove('active');
+        if (btnPen) btnPen.classList.add('active');
+        if (mobBtnPen) mobBtnPen.classList.add('active');
+        if (btnCls) btnCls.classList.remove('hidden');
+        if (mobBtnCls) mobBtnCls.classList.remove('hidden');
         
         // Setup Canvas elements
-        setupCanvas(canvas, cellId);
-        setupCanvas(mobCanvas, cellId);
+        if (canvas) setupCanvas(canvas, cellId);
+        if (mobCanvas) setupCanvas(mobCanvas, cellId);
         
         // If there's an existing drawing, restore it
         if (drawingStates[cellId]) {
-            restoreCanvasData(canvas, drawingStates[cellId]);
-            restoreCanvasData(mobCanvas, drawingStates[cellId]);
+            if (canvas) restoreCanvasData(canvas, drawingStates[cellId]);
+            if (mobCanvas) restoreCanvasData(mobCanvas, drawingStates[cellId]);
         }
     } else {
-        textInput.classList.remove('hidden');
-        mobTextInput.classList.remove('hidden');
-        canvas.classList.add('hidden');
-        mobCanvas.classList.add('hidden');
+        if (textInput) textInput.classList.remove('hidden');
+        if (mobTextInput) mobTextInput.classList.remove('hidden');
+        if (canvas) canvas.classList.add('hidden');
+        if (mobCanvas) mobCanvas.classList.add('hidden');
         
-        btnPen.classList.remove('active');
-        mobBtnPen.classList.remove('active');
-        btnKbd.classList.add('active');
-        mobBtnKbd.classList.add('active');
-        btnCls.classList.add('hidden');
-        mobBtnCls.classList.add('hidden');
+        if (btnPen) btnPen.classList.remove('active');
+        if (mobBtnPen) mobBtnPen.classList.remove('active');
+        if (btnKbd) btnKbd.classList.add('active');
+        if (mobBtnKbd) mobBtnKbd.classList.add('active');
+        if (btnCls) btnCls.classList.add('hidden');
+        if (mobBtnCls) mobBtnCls.classList.add('hidden');
     }
 }
 
@@ -590,11 +590,14 @@ function clearCanvasCell(cellId) {
     const canvas = document.getElementById(`canvas-${cellId}`);
     const mobCanvas = document.getElementById(`mob-canvas-${cellId}`);
     
-    const ctx = canvas.getContext('2d');
-    const mobCtx = mobCanvas.getContext('2d');
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    mobCtx.clearRect(0, 0, mobCanvas.width, mobCanvas.height);
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    if (mobCanvas) {
+        const mobCtx = mobCanvas.getContext('2d');
+        mobCtx.clearRect(0, 0, mobCanvas.width, mobCanvas.height);
+    }
     
     delete drawingStates[cellId];
 }
@@ -774,6 +777,125 @@ function clearCurrentTable(silent = false) {
             clearCanvasCell(cellId);
         });
     }
+}
+
+// CHALKBOARD BOARD SYSTEM FUNCTIONS
+function clearChalkboard(silent = false) {
+    if (!silent && !confirm("Tahtadaki tüm verileri temizlemek istediğinizden emin misiniz?")) return;
+    
+    const fields = [
+        'board-word', 'board-pronunciation', 'board-meaning', 'board-memorySentence',
+        'board-synonym-1', 'board-synonym-2', 'board-synonym-3',
+        'board-antonym-1', 'board-antonym-2', 'board-antonym-3'
+    ];
+    
+    fields.forEach(fieldId => {
+        const textInput = document.getElementById(fieldId);
+        if (textInput) {
+            textInput.innerHTML = '';
+        }
+        
+        // Switch back to keyboard mode
+        toggleCellInputMode(fieldId, 'kbd');
+        clearCanvasCell(fieldId);
+    });
+}
+
+function getCellData(cellId) {
+    const container = document.getElementById(`container-${cellId}`);
+    const textInput = document.getElementById(cellId);
+    
+    if (!container || !textInput) return { type: 'text', data: '' };
+    
+    const btnPen = container.querySelector('.btn-pen');
+    const isPenMode = btnPen && btnPen.classList.contains('active');
+    
+    if (isPenMode && drawingStates[cellId]) {
+        return { type: 'drawing', data: drawingStates[cellId] };
+    } else {
+        const text = textInput.innerHTML.trim();
+        return { type: 'text', data: text === '...' ? '' : text };
+    }
+}
+
+function saveChalkboardWord() {
+    const todayStr = getTodayDateStr();
+    
+    const wordData = getCellData('board-word');
+    const meaningData = getCellData('board-meaning');
+    const pronunciationData = getCellData('board-pronunciation');
+    const memorySentenceData = getCellData('board-memorySentence');
+    
+    const wordTextClean = wordData.type === 'text' 
+        ? wordData.data.replace(/<[^>]*>/g, '').toLowerCase().trim() 
+        : '';
+        
+    const hasWordContent = wordData.type === 'drawing' && drawingStates['board-word'];
+    const hasWordText = wordData.type === 'text' && wordData.data.trim() !== '';
+    const hasMeaningContent = meaningData.type === 'drawing' && drawingStates['board-meaning'];
+    const hasMeaningText = meaningData.type === 'text' && meaningData.data.trim() !== '';
+    
+    if (!(hasWordContent || hasWordText) && !(hasMeaningContent || hasMeaningText)) {
+        alert("Kaydetmek için en azından Kelime veya Anlamı alanını doldurmanız gerekiyor!");
+        return;
+    }
+    
+    const synonymsList = [
+        getCellData('board-synonym-1'),
+        getCellData('board-synonym-2'),
+        getCellData('board-synonym-3')
+    ];
+    
+    const antonymsList = [
+        getCellData('board-antonym-1'),
+        getCellData('board-antonym-2'),
+        getCellData('board-antonym-3')
+    ];
+    
+    const rowId = Date.now();
+    const wordObj = {
+        id: rowId,
+        language: activeLang,
+        date: todayStr,
+        createdAt: Date.now(),
+        word: wordData,
+        pronunciation: pronunciationData,
+        meaning: meaningData,
+        memorySentence: memorySentenceData,
+        synonyms: synonymsList,
+        antonyms: antonymsList,
+        wordText: wordTextClean || 'untitled_' + rowId
+    };
+    
+    saveWords([wordObj], () => {
+        logReportActivity('wordWritten', 1);
+        alert("Kelime başarıyla kaydedildi!");
+        clearChalkboard(true);
+        
+        getWords(() => {
+            loadAlphabeticalList();
+            loadArchiveList();
+            switchScreen('screen-word-lists');
+        });
+    });
+}
+
+function initChalkboardKeyboardBindings() {
+    const fields = [
+        'board-word', 'board-pronunciation', 'board-meaning', 'board-memorySentence',
+        'board-synonym-1', 'board-synonym-2', 'board-synonym-3',
+        'board-antonym-1', 'board-antonym-2', 'board-antonym-3'
+    ];
+    
+    fields.forEach(fieldId => {
+        const inputEl = document.getElementById(fieldId);
+        if (inputEl) {
+            inputEl.addEventListener('focus', () => {
+                activeFocusedInput = inputEl;
+                openVirtualKeyboardForLang();
+            });
+        }
+    });
 }
 
 // SELECTION & RICH TEXT COLOR TOOL
@@ -1004,7 +1126,7 @@ function renderWordCards(wordsList, containerElement) {
     
     wordsList.forEach(w => {
         const card = document.createElement('div');
-        card.className = 'word-display-card';
+        card.className = 'word-display-card collapsed';
         card.id = `card-word-${w.id}`;
         
         // Header
@@ -1015,11 +1137,22 @@ function renderWordCards(wordsList, containerElement) {
         titleSpan.className = 'card-word-title';
         renderCellContent(w.word, titleSpan);
         
+        const headerRight = document.createElement('div');
+        headerRight.className = 'card-header-right';
+        headerRight.style.display = 'flex';
+        headerRight.style.alignItems = 'center';
+        headerRight.style.gap = '8px';
+        
+        const chevron = document.createElement('span');
+        chevron.className = 'expand-chevron';
+        chevron.innerHTML = '▼';
+        
         const btnDel = document.createElement('button');
         btnDel.className = 'btn-delete-word';
         btnDel.innerHTML = '🗑️';
         btnDel.title = 'Kelimeyi Sil';
-        btnDel.onclick = () => {
+        btnDel.onclick = (e) => {
+            e.stopPropagation(); // Stop click from bubbling to card expansion
             if (confirm("Bu kelimeyi silmek istediğinizden emin misiniz?")) {
                 deleteWord(w.id, () => {
                     loadAlphabeticalList();
@@ -1028,11 +1161,16 @@ function renderWordCards(wordsList, containerElement) {
             }
         };
         
+        headerRight.appendChild(chevron);
+        headerRight.appendChild(btnDel);
         header.appendChild(titleSpan);
-        header.appendChild(btnDel);
+        header.appendChild(headerRight);
         card.appendChild(header);
         
-        // Body details
+        // Details container
+        const detailsDiv = document.createElement('div');
+        detailsDiv.className = 'card-details-container';
+        
         const fields = [
             { key: 'pronunciation', label: 'Okunuşu' },
             { key: 'meaning', label: 'Anlamı' },
@@ -1042,16 +1180,41 @@ function renderWordCards(wordsList, containerElement) {
         ];
         
         fields.forEach(field => {
-            if (w[field.key]) {
+            const val = w[field.key];
+            if (val) {
                 const fDiv = document.createElement('div');
                 fDiv.className = 'card-field';
                 fDiv.innerHTML = `<span class="card-label">${field.label}:</span> `;
                 
                 const spanVal = document.createElement('span');
-                renderCellContent(w[field.key], spanVal);
+                spanVal.className = 'card-value';
                 
+                if (Array.isArray(val)) {
+                    // Render list (our new layout structure)
+                    let hasAny = false;
+                    val.forEach(item => {
+                        const hasVal = item && (item.type === 'drawing' ? item.data : (item.data && item.data !== '...' && item.data !== '<br>' && item.data.trim() !== ''));
+                        if (hasVal) {
+                            if (hasAny) {
+                                const comma = document.createElement('span');
+                                comma.innerHTML = ', ';
+                                spanVal.appendChild(comma);
+                            }
+                            const itemSpan = document.createElement('span');
+                            renderCellContent(item, itemSpan);
+                            spanVal.appendChild(itemSpan);
+                            hasAny = true;
+                        }
+                    });
+                    if (!hasAny) {
+                        spanVal.innerHTML = '-';
+                    }
+                } else {
+                    // Render single cell legacy object
+                    renderCellContent(val, spanVal);
+                }
                 fDiv.appendChild(spanVal);
-                card.appendChild(fDiv);
+                detailsDiv.appendChild(fDiv);
             }
         });
         
@@ -1059,7 +1222,23 @@ function renderWordCards(wordsList, containerElement) {
         const dateStamp = document.createElement('div');
         dateStamp.className = 'date-stamp';
         dateStamp.textContent = w.date || 'Tarihsiz';
-        card.appendChild(dateStamp);
+        detailsDiv.appendChild(dateStamp);
+        
+        card.appendChild(detailsDiv);
+        
+        // Toggle expansion on card click
+        card.onclick = (e) => {
+            if (e.target.closest('.btn-delete-word')) return;
+            
+            const isCollapsed = card.classList.contains('collapsed');
+            if (isCollapsed) {
+                card.classList.remove('collapsed');
+                card.classList.add('expanded');
+            } else {
+                card.classList.remove('expanded');
+                card.classList.add('collapsed');
+            }
+        };
         
         containerElement.appendChild(card);
     });

@@ -106,33 +106,176 @@
                         📥 Word Yükle
                         <input type="file" id="word-file-upload" accept=".docx" style="display: none;" onchange="handleWordDocxUpload(event)">
                     </label>
-                    <button class="btn-clear" onclick="clearCurrentTable()">🗑️ Temizle</button>
-                    <button class="btn-save" onclick="saveCurrentTable()">💾 Kaydet</button>
+                    <button class="btn-clear" onclick="clearChalkboard()">🗑️ Temizle</button>
+                    <button class="btn-save" onclick="saveChalkboardWord()">💾 Kaydet</button>
                 </div>
             </header>
 
-            <div class="table-container-outer">
-                <table class="word-input-table" id="word-input-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">Satır</th>
-                            <th style="width: 15%;">KELİME</th>
-                            <th style="width: 15%;">Türkçe Okunuşu</th>
-                            <th style="width: 15%;">TÜRKÇE ANLAMI</th>
-                            <th style="width: 25%;">HAFIZA CÜMLESİ</th>
-                            <th style="width: 12.5%;">Eş Anlamlıları</th>
-                            <th style="width: 12.5%;">Zıt Anlamlıları</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <!-- 20 Rows dynamically generated here -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mobile Stack Version (shown on small screens) -->
-            <div id="mobile-cards-container" class="mobile-only-cards">
-                <!-- Mobile row cards dynamically injected here -->
+            <!-- SINGLE WORD BOARD WORKSPACE -->
+            <div class="board-workspace-container">
+                <div class="chalkboard-card">
+                    <!-- Board Title / Header -->
+                    <div class="board-header">
+                        <h2>Kelime Kayıt Alanı</h2>
+                        <span class="board-subtitle">Tablet kalemi veya klavye ile yazıp çizebilirsiniz</span>
+                    </div>
+                    
+                    <!-- Main Board Body Layout -->
+                    <div class="board-grid">
+                        <!-- Top Row: Word, Pronunciation, Meaning -->
+                        <div class="board-row top-row">
+                            <div class="board-field field-word">
+                                <label class="board-label">KELİME (Word)</label>
+                                <div class="cell-container" id="container-board-word">
+                                    <div class="text-input" contenteditable="true" id="board-word" placeholder="Kelimeyi girin veya çizin..."></div>
+                                    <canvas class="canvas-overlay hidden" id="canvas-board-word"></canvas>
+                                    <div class="cell-controls">
+                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-word', 'kbd')" title="Klavye Girişi">⌨️</button>
+                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-word', 'pen')" title="Kalem Çizimi">✏️</button>
+                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-word')" title="Çizimi Temizle">🧹</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="board-field field-pronunciation">
+                                <label class="board-label">TÜRKÇE OKUNUŞU</label>
+                                <div class="cell-container" id="container-board-pronunciation">
+                                    <div class="text-input" contenteditable="true" id="board-pronunciation" placeholder="Okunuşunu girin veya çizin..."></div>
+                                    <canvas class="canvas-overlay hidden" id="canvas-board-pronunciation"></canvas>
+                                    <div class="cell-controls">
+                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-pronunciation', 'kbd')" title="Klavye Girişi">⌨️</button>
+                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-pronunciation', 'pen')" title="Kalem Çizimi">✏️</button>
+                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-pronunciation')" title="Çizimi Temizle">🧹</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="board-field field-meaning">
+                                <label class="board-label">TÜRKÇE ANLAMI (Meaning)</label>
+                                <div class="cell-container" id="container-board-meaning">
+                                    <div class="text-input" contenteditable="true" id="board-meaning" placeholder="Anlamını girin veya çizin..."></div>
+                                    <canvas class="canvas-overlay hidden" id="canvas-board-meaning"></canvas>
+                                    <div class="cell-controls">
+                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-meaning', 'kbd')" title="Klavye Girişi">⌨️</button>
+                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-meaning', 'pen')" title="Kalem Çizimi">✏️</button>
+                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-meaning')" title="Çizimi Temizle">🧹</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Middle Row: Memory Sentence -->
+                        <div class="board-row middle-row">
+                            <div class="board-field field-memory">
+                                <label class="board-label">HAFIZA CÜMLESİ (Memory Association Sentence)</label>
+                                <div class="cell-container" id="container-board-memorySentence">
+                                    <div class="text-input" contenteditable="true" id="board-memorySentence" placeholder="Hafıza cümlesini yazın veya çizin..."></div>
+                                    <canvas class="canvas-overlay hidden" id="canvas-board-memorySentence"></canvas>
+                                    <div class="cell-controls">
+                                        <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-memorySentence', 'kbd')" title="Klavye Girişi">⌨️</button>
+                                        <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-memorySentence', 'pen')" title="Kalem Çizimi">✏️</button>
+                                        <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-memorySentence')" title="Çizimi Temizle">🧹</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom Row: Antonyms (Left) and Synonyms (Right) -->
+                        <div class="board-row bottom-row">
+                            <!-- Left Column: Antonyms -->
+                            <div class="board-column column-antonyms">
+                                <h3 class="column-title">◀ ZIT ANLAMLILARI (Antonyms)</h3>
+                                <div class="subfields-list">
+                                    <div class="board-subfield">
+                                        <span class="sub-num">1</span>
+                                        <div class="cell-container" id="container-board-antonym-1">
+                                            <div class="text-input" contenteditable="true" id="board-antonym-1" placeholder="Zıt anlam 1..."></div>
+                                            <canvas class="canvas-overlay hidden" id="canvas-board-antonym-1"></canvas>
+                                            <div class="cell-controls">
+                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-antonym-1', 'kbd')" title="Klavye">⌨️</button>
+                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-antonym-1', 'pen')" title="Kalem">✏️</button>
+                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-antonym-1')" title="Temizle">🧹</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="board-subfield">
+                                        <span class="sub-num">2</span>
+                                        <div class="cell-container" id="container-board-antonym-2">
+                                            <div class="text-input" contenteditable="true" id="board-antonym-2" placeholder="Zıt anlam 2..."></div>
+                                            <canvas class="canvas-overlay hidden" id="canvas-board-antonym-2"></canvas>
+                                            <div class="cell-controls">
+                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-antonym-2', 'kbd')" title="Klavye">⌨️</button>
+                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-antonym-2', 'pen')" title="Kalem">✏️</button>
+                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-antonym-2')" title="Temizle">🧹</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="board-subfield">
+                                        <span class="sub-num">3</span>
+                                        <div class="cell-container" id="container-board-antonym-3">
+                                            <div class="text-input" contenteditable="true" id="board-antonym-3" placeholder="Zıt anlam 3..."></div>
+                                            <canvas class="canvas-overlay hidden" id="canvas-board-antonym-3"></canvas>
+                                            <div class="cell-controls">
+                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-antonym-3', 'kbd')" title="Klavye">⌨️</button>
+                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-antonym-3', 'pen')" title="Kalem">✏️</button>
+                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-antonym-3')" title="Temizle">🧹</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column: Synonyms -->
+                            <div class="board-column column-synonyms">
+                                <h3 class="column-title">EŞ ANLAMLILARI (Synonyms) ▶</h3>
+                                <div class="subfields-list">
+                                    <div class="board-subfield">
+                                        <span class="sub-num">1</span>
+                                        <div class="cell-container" id="container-board-synonym-1">
+                                            <div class="text-input" contenteditable="true" id="board-synonym-1" placeholder="Eş anlam 1..."></div>
+                                            <canvas class="canvas-overlay hidden" id="canvas-board-synonym-1"></canvas>
+                                            <div class="cell-controls">
+                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-synonym-1', 'kbd')" title="Klavye">⌨️</button>
+                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-synonym-1', 'pen')" title="Kalem">✏️</button>
+                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-synonym-1')" title="Temizle">🧹</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="board-subfield">
+                                        <span class="sub-num">2</span>
+                                        <div class="cell-container" id="container-board-synonym-2">
+                                            <div class="text-input" contenteditable="true" id="board-synonym-2" placeholder="Eş anlam 2..."></div>
+                                            <canvas class="canvas-overlay hidden" id="canvas-board-synonym-2"></canvas>
+                                            <div class="cell-controls">
+                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-synonym-2', 'kbd')" title="Klavye">⌨️</button>
+                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-synonym-2', 'pen')" title="Kalem">✏️</button>
+                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-synonym-2')" title="Temizle">🧹</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="board-subfield">
+                                        <span class="sub-num">3</span>
+                                        <div class="cell-container" id="container-board-synonym-3">
+                                            <div class="text-input" contenteditable="true" id="board-synonym-3" placeholder="Eş anlam 3..."></div>
+                                            <canvas class="canvas-overlay hidden" id="canvas-board-synonym-3"></canvas>
+                                            <div class="cell-controls">
+                                                <button class="cell-btn btn-kbd active" onclick="toggleCellInputMode('board-synonym-3', 'kbd')" title="Klavye">⌨️</button>
+                                                <button class="cell-btn btn-pen" onclick="toggleCellInputMode('board-synonym-3', 'pen')" title="Kalem">✏️</button>
+                                                <button class="cell-btn btn-cls hidden" onclick="clearCanvasCell('board-synonym-3')" title="Temizle">🧹</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bottom Action Buttons -->
+                    <div class="board-actions">
+                        <button class="btn-clear-board" onclick="clearChalkboard(false)">🗑️ Temizle</button>
+                        <button class="btn-save-board" onclick="saveChalkboardWord()">💾 Listeye Kaydet</button>
+                    </div>
+                </div>
             </div>
         </section>
 
